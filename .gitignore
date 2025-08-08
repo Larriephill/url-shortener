@@ -1,0 +1,24 @@
+# ---- Terraform (keep lock file tracked!) ----
+**/.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
+*.tfvars
+*.tfvars.json
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# ---- Lambda / Python build artifacts ----
+lambda.zip
+dist/
+build/
+__pycache__/
+*.py[cod]
+
+# ---- Editors / OS ----
+.vscode/
+.DS_Store
+Thumbs.db
