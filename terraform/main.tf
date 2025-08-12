@@ -7,6 +7,11 @@ resource "aws_dynamodb_table" "urls" {
     name = "shortcode"
     type = "S"
   }
+  ttl {
+    attribute_name = "expiresAt"
+    enabled        = true
+  }
+
 
   tags = {
     Project = "url-shortener"

@@ -3,6 +3,14 @@ resource "aws_apigatewayv2_api" "http" {
   name          = "url-${var.stage}"
   protocol_type = "HTTP"
 
+  cors_configuration {
+    allow_origins = ["*"]
+    allow_methods = ["GET", "POST", "OPTIONS"]
+    allow_headers = ["content-type"]
+    max_age       = 3600
+  }
+
+
   #  CORS for front-ends)
   # cors_configuration {
   #   allow_origins = ["*"]
