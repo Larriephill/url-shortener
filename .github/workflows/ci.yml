@@ -63,7 +63,13 @@ jobs:
         working-directory: ${{ env.TF_WORKING_DIR }}
         run: terraform plan -input=false -no-color -var="stage=${{ env.TF_VAR_stage }}"
 
+      - name: Read API URL from state
+        id: tfout
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: echo "api=$(terraform output -raw api_base_url)" >> "$GITHUB_OUTPUT"
+
+
       - name: Smoke test (POST/GET)
         env:
-          API_URL: ${{ secrets.DEV_API_URL }}
+          API_URL: ${{ steps.tfout.outputs.api }}
         run: bash verify.sh "$API_URL"
