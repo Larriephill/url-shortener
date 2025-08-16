@@ -28,30 +28,30 @@ jobs:
           echo "ref=$GITHUB_REF"
           echo "repository=$GITHUB_REPOSITORY"
 
-
       - name: Configure AWS (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: arn:aws:iam::416162027738:role/url-dev-gha-plan
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-
-      - name: Terraform fmt/validate/init
+      - name: Terraform fmt (check only)
         working-directory: ${{ env.TF_WORKING_DIR }}
-        run: |
-          terraform fmt -recursive -check
-          terraform validate
-          terraform init -input=false
+        run: terraform fmt -recursive -check
+
+      - name: Terraform init (remote backend)
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: terraform init -input=false -upgrade
+
+      - name: Terraform validate
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: terraform validate
 
       - name: Terraform plan
         working-directory: ${{ env.TF_WORKING_DIR }}
         run: terraform plan -input=false -no-color -var="stage=${{ env.TF_VAR_stage }}"
 
-      
       - name: Smoke test (POST/GET)
         env:
-          API_URL: ${{ secrets.DEV_API_URL }}   # set this in repo Settings → Secrets and variables → Actions
+          API_URL: ${{ secrets.DEV_API_URL }}
         run: |
           bash verify.sh "$API_URL"
