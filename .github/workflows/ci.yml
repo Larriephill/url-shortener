@@ -10,41 +10,52 @@ jobs:
   plan-and-smoke:
     runs-on: ubuntu-latest
     permissions:
-      id-token: write   # OIDC
+      id-token: write   # for OIDC
       contents: read
 
     env:
       TF_WORKING_DIR: terraform
       AWS_REGION: eu-west-2
       TF_VAR_stage: dev
+      TF_IN_AUTOMATION: "1"
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # Optional: keep for a little while while debugging
       - name: Show workflow context (temporary)
         run: |
           echo "event=$GITHUB_EVENT_NAME"
           echo "ref=$GITHUB_REF"
           echo "repository=$GITHUB_REPOSITORY"
 
+      # Install Terraform on the runner BEFORE any terraform commands
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          # Pin a stable version compatible with your config; adjust if your versions.tf requires a specific one
+          terraform_version: 1.9.5
+
+      # fmt/validate don’t need AWS creds, so run them first
+      - name: Terraform fmt (check only)
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: terraform fmt -recursive -check
+
+      - name: Terraform validate
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: terraform validate
+
+      # Configure AWS for backend init/plan
       - name: Configure AWS (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: arn:aws:iam::416162027738:role/url-dev-gha-plan
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Terraform fmt (check only)
-        working-directory: ${{ env.TF_WORKING_DIR }}
-        run: terraform fmt -recursive -check
-
       - name: Terraform init (remote backend)
         working-directory: ${{ env.TF_WORKING_DIR }}
         run: terraform init -input=false -upgrade
-
-      - name: Terraform validate
-        working-directory: ${{ env.TF_WORKING_DIR }}
-        run: terraform validate
 
       - name: Terraform plan
         working-directory: ${{ env.TF_WORKING_DIR }}
@@ -53,5 +64,4 @@ jobs:
       - name: Smoke test (POST/GET)
         env:
           API_URL: ${{ secrets.DEV_API_URL }}
-        run: |
-          bash verify.sh "$API_URL"
+        run: bash verify.sh "$API_URL"
