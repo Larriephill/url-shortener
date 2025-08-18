@@ -26,9 +26,23 @@ data "aws_iam_policy_document" "gha_oidc_trust" {
       test     = "StringLike"
       variable = "token.actions.githubusercontent.com:sub"
       values = [
-        "repo:larriephill/url-shortener:ref:refs/heads/dev"
+        "repo:larriephill/url-shortener:ref:refs/heads/dev",
+        "repo:larriephill/url-shortener:pull_request"
       ]
     }
+
+    condition {
+      test     = "StringLike"
+      variable = "token.actions.githubusercontent.com:sub"
+      values = [
+        "repo:larriephill/url-shortener:ref:refs/heads/dev",
+        "repo:Larriephill/url-shortener:ref:refs/heads/dev",
+        "repo:larriephill/url-shortener:pull_request",
+        "repo:Larriephill/url-shortener:pull_request"
+      ]
+    }
+
+
   }
 }
 

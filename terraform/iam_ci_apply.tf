@@ -46,7 +46,7 @@ data "aws_iam_policy_document" "tf_backend_apply" {
     actions = ["s3:GetObject", "s3:PutObject", "s3:ListBucket", "s3:GetBucketLocation"]
     resources = [
       "arn:aws:s3:::urlshortenerlarriephill",
-      "arn:aws:s3:::urlshortenerlarriephill*"
+      "arn:aws:s3:::urlshortenerlarriephill/*"
     ]
   }
   statement {
