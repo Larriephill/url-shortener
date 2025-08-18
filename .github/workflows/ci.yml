@@ -23,21 +23,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # Optional: keep for a little while while debugging
-      - name: Show workflow context (temporary)
-        run: |
-          echo "event=$GITHUB_EVENT_NAME"
-          echo "ref=$GITHUB_REF"
-          echo "repository=$GITHUB_REPOSITORY"
 
-      # Install Terraform on the runner BEFORE any terraform commands
+   
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          # Pin a stable version compatible with your config; adjust if your versions.tf requires a specific one
+        
           terraform_version: 1.9.5
 
-      # fmt/validate don’t need AWS creds, so run them first
+    
       - name: Terraform fmt (check only)
         working-directory: ${{ env.TF_WORKING_DIR }}
         run: terraform fmt -recursive -check
@@ -72,4 +66,10 @@ jobs:
       - name: Smoke test (POST/GET)
         env:
           API_URL: ${{ steps.tfout.outputs.api }}
-        run: bash verify.sh "$API_URL"
+        run: |
+          set -euo pipefail
+          RESP=$(curl -sS -X POST "$API_URL/" -H 'Content-Type: application/json' -d '{"url":"example.com"}')
+          CODE=$(echo "$RESP" | jq -r '.shortcode')
+          test -n "$CODE"
+          STATUS=$(curl -sS -o /dev/null -D - "$API_URL/$CODE" | head -1 | awk '{print $2}')
+          test "$STATUS" = "302"
