@@ -1,25 +1,57 @@
-
-# Trusts only repo + dev branch
-
 data "aws_iam_policy_document" "gha_oidc_trust_apply" {
   statement {
     actions = ["sts:AssumeRoleWithWebIdentity"]
+
     principals {
       type        = "Federated"
       identifiers = [aws_iam_openid_connect_provider.github.arn]
     }
 
+    # Must be STS audience
     condition {
       test     = "StringEquals"
       variable = "token.actions.githubusercontent.com:aud"
       values   = ["sts.amazonaws.com"]
     }
 
+    # Only this repository (allow both casings)
     condition {
-      test     = "StringLike"
+      test     = "StringEquals"
+      variable = "token.actions.githubusercontent.com:repository"
+      values = [
+        "larriephill/url-shortener",
+        "Larriephill/url-shortener"
+      ]
+    }
+
+    # Only this workflow
+    condition {
+      test     = "StringEquals"
+      variable = "token.actions.githubusercontent.com:workflow"
+      values   = ["deploy-dev"]
+    }
+
+    # Must be run from the dev branch in the UI
+    condition {
+      test     = "StringEquals"
+      variable = "token.actions.githubusercontent.com:ref"
+      values   = ["refs/heads/dev"]
+    }
+
+    # Must target the 'dev' environment (job has environment: dev)
+    condition {
+      test     = "StringEquals"
+      variable = "token.actions.githubusercontent.com:environment"
+      values   = ["dev"]
+    }
+
+    # Subject must also be dev branch
+    condition {
+      test     = "StringEquals"
       variable = "token.actions.githubusercontent.com:sub"
       values = [
-        "repo:larriephill/url-shortener:ref:refs/heads/dev"
+        "repo:larriephill/url-shortener:ref:refs/heads/dev",
+        "repo:Larriephill/url-shortener:ref:refs/heads/dev"
       ]
     }
   }
