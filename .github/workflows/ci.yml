@@ -36,6 +36,16 @@ jobs:
         working-directory: ${{ env.TF_WORKING_DIR }}
         run: terraform fmt -recursive -check
 
+      - name: Show OIDC claims (temporary)
+        permissions:
+          id-token: write
+          contents: read
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const token = await core.getIDToken('sts.amazonaws.com');
+            const claims = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
+            core.info(JSON.stringify(claims, null, 2));
 
 
       # Configure AWS for backend init/plan
