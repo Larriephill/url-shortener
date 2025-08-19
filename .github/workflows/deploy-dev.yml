@@ -23,6 +23,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+        
+      - name: Show OIDC claims (temporary)
+        permissions:
+          id-token: write
+          contents: read
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const token = await core.getIDToken('sts.amazonaws.com');
+            const claims = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
+            core.info(JSON.stringify(claims, null, 2));        
+
       - name: Configure AWS (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
         with:
