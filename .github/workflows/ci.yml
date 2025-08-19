@@ -9,8 +9,9 @@ on:
 jobs:
   plan-and-smoke:
     runs-on: ubuntu-latest
-    permissions:
-      id-token: write   # for OIDC
+
+    permissions:              # job-level (valid)
+      id-token: write
       contents: read
 
     env:
@@ -23,22 +24,23 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-
-   
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
-        
           terraform_version: 1.9.5
 
-    
       - name: Terraform fmt (check only)
         working-directory: ${{ env.TF_WORKING_DIR }}
         run: terraform fmt -recursive -check
 
+      - name: Show OIDC claims (temporary)     # no step-level permissions here
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const token = await core.getIDToken('sts.amazonaws.com');
+            const claims = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
+            core.info(JSON.stringify(claims, null, 2));
 
-
-      # Configure AWS for backend init/plan
       - name: Configure AWS (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -52,7 +54,7 @@ jobs:
       - name: Terraform validate
         working-directory: ${{ env.TF_WORKING_DIR }}
         run: terraform validate
-      
+
       - name: Terraform plan
         working-directory: ${{ env.TF_WORKING_DIR }}
         run: terraform plan -input=false -no-color -var="stage=${{ env.TF_VAR_stage }}"
@@ -61,7 +63,6 @@ jobs:
         id: tfout
         working-directory: ${{ env.TF_WORKING_DIR }}
         run: echo "api=$(terraform output -raw api_base_url)" >> "$GITHUB_OUTPUT"
-
 
       - name: Smoke test (POST/GET)
         env:
@@ -73,3 +74,4 @@ jobs:
           test -n "$CODE"
           STATUS=$(curl -sS -o /dev/null -D - "$API_URL/$CODE" | head -1 | awk '{print $2}')
           test "$STATUS" = "302"
+
