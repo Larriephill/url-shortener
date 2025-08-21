@@ -10,7 +10,7 @@ jobs:
   plan-and-smoke:
     runs-on: ubuntu-latest
     permissions:
-      id-token: write   # for OIDC
+      id-token: write # for OIDC
       contents: read
 
     env:
@@ -20,56 +20,50 @@ jobs:
       TF_IN_AUTOMATION: "1"
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+    - name: Checkout
+      uses: actions/checkout@v4
 
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: 1.9.5
 
-   
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-        
-          terraform_version: 1.9.5
+    - name: Terraform fmt (check only)
+      working-directory: ${{ env.TF_WORKING_DIR }}
+      run: terraform fmt -recursive -check
 
-    
-      - name: Terraform fmt (check only)
-        working-directory: ${{ env.TF_WORKING_DIR }}
-        run: terraform fmt -recursive -check
+    # Configure AWS for backend init/plan
+    - name: Configure AWS (OIDC)
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: arn:aws:iam::416162027738:role/url-dev-gha-plan
+        aws-region: ${{ env.AWS_REGION }}
 
+    - name: Terraform init (remote backend)
+      working-directory: ${{ env.TF_WORKING_DIR }}
+      run: terraform init -input=false -upgrade
 
+    - name: Terraform validate
+      working-directory: ${{ env.TF_WORKING_DIR }}
+      run: terraform validate
 
-      # Configure AWS for backend init/plan
-      - name: Configure AWS (OIDC)
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: arn:aws:iam::416162027738:role/url-dev-gha-plan
-          aws-region: ${{ env.AWS_REGION }}
+    - name: Terraform plan
+      working-directory: ${{ env.TF_WORKING_DIR }}
+      run: terraform plan -input=false -no-color -var="stage=${{ env.TF_VAR_stage }}"
 
-      - name: Terraform init (remote backend)
-        working-directory: ${{ env.TF_WORKING_DIR }}
-        run: terraform init -input=false -upgrade
+    - name: Read API URL from state
+      id: tfout
+      working-directory: ${{ env.TF_WORKING_DIR }}
+      run: echo "api=$(terraform output -raw api_base_url)" >> "$GITHUB_OUTPUT"
 
-      - name: Terraform validate
-        working-directory: ${{ env.TF_WORKING_DIR }}
-        run: terraform validate
-      
-      - name: Terraform plan
-        working-directory: ${{ env.TF_WORKING_DIR }}
-        run: terraform plan -input=false -no-color -var="stage=${{ env.TF_VAR_stage }}"
+    - name: Smoke test (POST/GET)
+      env:
+        API_URL: ${{ steps.tfout.outputs.api }}
+      run: |
+        set -euo pipefail
+        RESP=$(curl -sS -X POST "$API_URL/" -H 'Content-Type: application/json' -d '{"url":"example.com"}')
+        CODE=$(echo "$RESP" | jq -r '.shortcode')
+        test -n "$CODE"
+        STATUS=$(curl -sS -o /dev/null -D - "$API_URL/$CODE" | head -1 | awk '{print $2}')
+        test "$STATUS" = "302"
 
-      - name: Read API URL from state
-        id: tfout
-        working-directory: ${{ env.TF_WORKING_DIR }}
-        run: echo "api=$(terraform output -raw api_base_url)" >> "$GITHUB_OUTPUT"
-
-
-      - name: Smoke test (POST/GET)
-        env:
-          API_URL: ${{ steps.tfout.outputs.api }}
-        run: |
-          set -euo pipefail
-          RESP=$(curl -sS -X POST "$API_URL/" -H 'Content-Type: application/json' -d '{"url":"example.com"}')
-          CODE=$(echo "$RESP" | jq -r '.shortcode')
-          test -n "$CODE"
-          STATUS=$(curl -sS -o /dev/null -D - "$API_URL/$CODE" | head -1 | awk '{print $2}')
-          test "$STATUS" = "302"
