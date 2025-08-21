@@ -1,43 +1,27 @@
 name: deploy-dev
 
 on:
-  workflow_dispatch: {}
+  workflow_dispatch: {}   # run manually from Actions tab
 
 jobs:
   apply:
     runs-on: ubuntu-latest
-    environment: dev              # requires approval; gives access to environment secrets
+    environment: dev         # requires approval; gets env secrets: DEV_API_URL
     concurrency:
-      group: deploy-dev
+      group: deploy-dev      # prevent parallel applies
       cancel-in-progress: false
-
-    permissions:                  # job-level permissions (valid)
-      id-token: write             # needed for OIDC
+    permissions:
+      id-token: write
       contents: read
 
     env:
       TF_WORKING_DIR: terraform
       AWS_REGION: eu-west-2
       TF_VAR_stage: dev
-      TF_IN_AUTOMATION: "1"
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: 1.9.5
-
-      # Optional temporary step: prints claims without any extra permissions here
-      - name: Show OIDC claims (temporary)
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const token = await core.getIDToken('sts.amazonaws.com');
-            const claims = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
-            core.info(JSON.stringify(claims, null, 2));
 
       - name: Configure AWS (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
@@ -45,20 +29,18 @@ jobs:
           role-to-assume: arn:aws:iam::416162027738:role/url-dev-gha-apply
           aws-region: ${{ env.AWS_REGION }}
 
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
       - name: Terraform init
         working-directory: ${{ env.TF_WORKING_DIR }}
-        run: terraform init -input=false -upgrade
+        run: terraform init -input=false
 
       - name: Terraform apply (dev)
         working-directory: ${{ env.TF_WORKING_DIR }}
         run: terraform apply -auto-approve -input=false -var="stage=${{ env.TF_VAR_stage }}"
 
-      - name: Read API URL from state
-        id: tfout
-        working-directory: ${{ env.TF_WORKING_DIR }}
-        run: echo "api=$(terraform output -raw api_base_url)" >> "$GITHUB_OUTPUT"
-
       - name: Smoke test
         env:
-          API_URL: ${{ steps.tfout.outputs.api }}
+          API_URL: ${{ secrets.DEV_API_URL }}
         run: bash verify.sh "$API_URL"

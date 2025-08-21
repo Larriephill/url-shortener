@@ -1,3 +1,5 @@
+# Trust policy for CI plan role (read-only)
+
 data "aws_iam_policy_document" "gha_oidc_trust" {
   statement {
     actions = ["sts:AssumeRoleWithWebIdentity"]
@@ -7,44 +9,38 @@ data "aws_iam_policy_document" "gha_oidc_trust" {
       identifiers = [aws_iam_openid_connect_provider.github.arn]
     }
 
-    # Must be STS audience
+    # Audience must be STS
     condition {
       test     = "StringEquals"
       variable = "token.actions.githubusercontent.com:aud"
       values   = ["sts.amazonaws.com"]
     }
 
-    # Only this repository (allow both casings)
+    # Only this repository
     condition {
       test     = "StringEquals"
       variable = "token.actions.githubusercontent.com:repository"
-      values = [
-        "larriephill/url-shortener",
-        "Larriephill/url-shortener"
-      ]
+      values   = ["larriephill/url-shortener"]
     }
 
-    # Only this workflow name
+    # Only this workflow name (matches 'name:' at top of ci.yml)
     condition {
       test     = "StringEquals"
       variable = "token.actions.githubusercontent.com:workflow"
       values   = ["ci-dev"]
     }
 
-    # Allow: push/dispatch on dev branch AND pull_request events
+    # Allow branch runs on dev and pull_request runs
     condition {
       test     = "StringLike"
       variable = "token.actions.githubusercontent.com:sub"
       values = [
         "repo:larriephill/url-shortener:ref:refs/heads/dev",
-        "repo:Larriephill/url-shortener:ref:refs/heads/dev",
-        "repo:larriephill/url-shortener:pull_request",
-        "repo:Larriephill/url-shortener:pull_request"
+        "repo:larriephill/url-shortener:pull_request"
       ]
     }
   }
 }
-
 
 
 
