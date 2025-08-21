@@ -3,6 +3,10 @@ name: deploy-dev
 on:
   workflow_dispatch:
 
+concurrency:
+  group: deploy-dev
+  cancel-in-progress: false  
+
 permissions:
   id-token: write
   contents: read
