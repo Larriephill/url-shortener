@@ -58,7 +58,27 @@ jobs:
         working-directory: ${{ env.TF_WORKING_DIR }}
         run: terraform plan -input=false -no-color -var="stage=${{ env.TF_VAR_stage }}"
 
-      # Full apply with stage variable
       - name: Terraform apply
         working-directory: ${{ env.TF_WORKING_DIR }}
         run: terraform apply -auto-approve -input=false -var="stage=${{ env.TF_VAR_stage }}"
+
+      - name: Read API URL
+        id: tfout
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: echo "api=$(terraform output -raw api_base_url)" >> "$GITHUB_OUTPUT"
+
+      - name: Post-deploy smoke
+        env:
+          API_URL: ${{ steps.tfout.outputs.api }}
+        run: |
+          set -euo pipefail
+          echo "API_URL=$API_URL"
+          # POST -> expect {"shortcode": "..."}
+          RESP=$(curl -sS -X POST "$API_URL/" -H 'Content-Type: application/json' -d '{"url":"example.com"}')
+          echo "POST response: $RESP"
+          CODE=$(echo "$RESP" | jq -r '.shortcode')
+          test -n "$CODE"
+          # GET -> expect 302
+          STATUS=$(curl -sS -o /dev/null -D - "$API_URL/$CODE" | head -1 | awk '{print $2}')
+          echo "GET status: $STATUS"
+          test "$STATUS" = "302"
