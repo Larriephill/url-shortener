@@ -6,93 +6,80 @@ on:
   pull_request:
     branches: [ "dev" ]
 
+permissions:
+  id-token: write   # for OIDC
+  contents: read
+
+env:
+  TF_WORKING_DIR: terraform
+  AWS_REGION: eu-west-2
+  TF_VAR_stage: dev
+  TF_IN_AUTOMATION: "1"
+
 jobs:
   plan-and-smoke:
     runs-on: ubuntu-latest
-    permissions:
-      id-token: write # for OIDC
-      contents: read
-
-    env:
-      TF_WORKING_DIR: terraform
-      AWS_REGION: eu-west-2
-      TF_VAR_stage: dev
-      TF_IN_AUTOMATION: "1"
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v3
-      with:
-        terraform_version: 1.9.5
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.9.5
 
-    - name: Terraform fmt (check only)
-      working-directory: ${{ env.TF_WORKING_DIR }}
-      run: terraform fmt -recursive -check
+      - name: Terraform fmt (check only)
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: terraform fmt -recursive -check
 
-    # Configure AWS for backend init/plan
-    - name: Configure AWS (OIDC)
-      uses: aws-actions/configure-aws-credentials@v4
-      with:
-        role-to-assume: arn:aws:iam::416162027738:role/url-dev-gha-plan
-        aws-region: ${{ env.AWS_REGION }}
+      - name: Configure AWS (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::416162027738:role/url-dev-gha-plan
+          aws-region: ${{ env.AWS_REGION }}
 
-    - name: Terraform init (remote backend)
-      working-directory: ${{ env.TF_WORKING_DIR }}
-      run: terraform init -input=false -upgrade
+      - name: Terraform init (remote backend)
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: terraform init -input=false -upgrade
 
-    - name: Terraform validate
-      working-directory: ${{ env.TF_WORKING_DIR }}
-      run: terraform validate
+      - name: Terraform validate
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: terraform validate
 
-    - name: Terraform plan
-      working-directory: ${{ env.TF_WORKING_DIR }}
-      run: terraform plan -input=false -no-color -var="stage=${{ env.TF_VAR_stage }}"
+      - name: Terraform plan
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: terraform plan -input=false -no-color -var="stage=${{ env.TF_VAR_stage }}"
 
-    - name: Read API URL from state
-      id: tfout
-      working-directory: ${{ env.TF_WORKING_DIR }}
-      run: echo "api=$(terraform output -raw api_base_url)" >> "$GITHUB_OUTPUT"
+      - name: Read API URL from state
+        id: tfout
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: echo "api=$(terraform output -raw api_base_url)" >> "$GITHUB_OUTPUT"
 
-    - name: Smoke test (POST/GET)
-      env:
-        API_URL: ${{ steps.tfout.outputs.api }}
-      run: |
-        set -euo pipefail
-        RESP=$(curl -sS -X POST "$API_URL/" -H 'Content-Type: application/json' -d '{"url":"example.com"}')
-        CODE=$(echo "$RESP" | jq -r '.shortcode')
-        test -n "$CODE"
-        STATUS=$(curl -sS -o /dev/null -D - "$API_URL/$CODE" | head -1 | awk '{print $2}')
-        test "$STATUS" = "302"
+      - name: Smoke test (POST/GET)
+        env:
+          API_URL: ${{ steps.tfout.outputs.api }}
+        run: |
+          set -euo pipefail
+          RESP=$(curl -sS -X POST "$API_URL/" -H 'Content-Type: application/json' -d '{"url":"example.com"}')
+          CODE=$(echo "$RESP" | jq -r '.shortcode')
+          test -n "$CODE"
+          STATUS=$(curl -sS -o /dev/null -D - "$API_URL/$CODE" | head -1 | awk '{print $2}')
+          test "$STATUS" = "302"
 
-  name: ci-dev
-
-on:
-  push:
-    branches: [ "dev" ]
-  pull_request:
-    branches: [ "dev" ]
-
-jobs:
   security-scan:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    env:
-      TF_WORKING_DIR: terraform
-    steps:
-      - uses: actions/checkout@v4
 
-      # tfsec – Terraform static analysis
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: tfsec
         uses: aquasecurity/tfsec-action@v1.0.3
         with:
           working_directory: ${{ env.TF_WORKING_DIR }}
           additional_args: --no-color --soft-fail
 
-      # Checkov – second opinion
       - name: Checkov
         uses: bridgecrewio/checkov-action@v12
         with:
@@ -100,46 +87,3 @@ jobs:
           framework: terraform
           quiet: true
           soft_fail: true
-
-  plan-and-smoke:
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
-    env:
-      TF_WORKING_DIR: terraform
-      AWS_REGION: eu-west-2
-      TF_VAR_stage: dev
-      TF_IN_AUTOMATION: "1"
-    steps:
-      - uses: actions/checkout@v4
-      - uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: 1.9.5
-      - name: Terraform fmt (check only)
-        working-directory: ${{ env.TF_WORKING_DIR }}
-        run: terraform fmt -recursive -check
-      - name: Configure AWS (OIDC)
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: arn:aws:iam::416162027738:role/url-dev-gha-plan
-          aws-region: ${{ env.AWS_REGION }}
-      - name: Terraform init (remote backend)
-        working-directory: ${{ env.TF_WORKING_DIR }}
-        run: terraform init -input=false -upgrade
-      - name: Terraform validate
-        working-directory: ${{ env.TF_WORKING_DIR }}
-        run: terraform validate
-      - name: Terraform plan
-        working-directory: ${{ env.TF_WORKING_DIR }}
-        run: terraform plan -input=false -no-color -var="stage=${{ env.TF_VAR_stage }}"
-      - name: Read API URL from state
-        id: tfout
-        working-directory: ${{ env.TF_WORKING_DIR }}
-        run: echo "api=$(terraform output -raw api_base_url)" >> "$GITHUB_OUTPUT"
-      - name: Smoke test (POST/GET)
-        env:
-          API_URL: ${{ steps.tfout.outputs.api }}
-        run: bash verify.sh "$API_URL"
-
-
