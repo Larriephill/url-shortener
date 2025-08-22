@@ -47,10 +47,14 @@ jobs:
 
       # Prove backend WRITE (Put/DeleteObject) safely
       - name: Backend write test
+        env:
+          TEST_KEY: state/_ci_test/${{ github.run_id }}.txt
         run: |
+          set -euo pipefail
           echo ok > /tmp/oidc_write_test.txt
-          aws s3 cp /tmp/oidc_write_test.txt s3://urlshortenerlarriephill/_oidc_test_${{ github.run_id }}.txt
-          aws s3 rm s3://urlshortenerlarriephill/_oidc_test_${{ github.run_id }}.txt
+          aws s3 cp /tmp/oidc_write_test.txt s3://urlshortenerlarriephill/$TEST_KEY
+          aws s3 rm s3://urlshortenerlarriephill/$TEST_KEY
+
 
       # Non-destructive apply just to refresh state (will be no-op if no drift)
       - name: Terraform apply (refresh-only)
