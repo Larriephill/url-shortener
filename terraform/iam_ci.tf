@@ -70,3 +70,10 @@ resource "aws_iam_role_policy_attachment" "gha_plan_attach" {
   policy_arn = aws_iam_policy.gha_plan_backend.arn
 }
 
+
+# Attach AWS managed ReadOnlyAccess so plan can read all resources it needs
+
+resource "aws_iam_role_policy_attachment" "plan_readonly" {
+  role       = aws_iam_role.gha_plan.name
+  policy_arn = "arn:aws:iam::aws:policy/ReadOnlyAccess"
+}

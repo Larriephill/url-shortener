@@ -34,7 +34,8 @@ def put_mapping(shortcode: str, long_url: str, ttl_epoch: int | None = None):
     """Write mapping; optionally include TTL attribute if you enable TTL."""
     item = {"shortcode": shortcode, "url": long_url}
     if ttl_epoch is not None:
-        item["expiresAt"] = ttl_epoch                   # your TTL attribute name
+        # DynamoDB TTL attribute must be named exactly "expiresAt" and be a Number
+        item["expiresAt"] = ttl_epoch
     _get_table().put_item(Item=item, ConditionExpression="attribute_not_exists(shortcode)")
 
 def get_mapping(shortcode: str):
@@ -77,7 +78,7 @@ def response(status: int, body=None, headers=None):
 def lambda_handler(event, context):
     """
     Supports:
-      - POST /           with JSON {"url": "...", "ttl_seconds": <optional>}
+      - POST /           with JSON {"url": "..."}
       - GET  /{code}     redirects (302) to the long URL
     Works with API Gateway HTTP API (Lambda proxy integration).
     """
@@ -88,6 +89,7 @@ def lambda_handler(event, context):
         event.get("httpMethod")
         or event.get("requestContext", {}).get("http", {}).get("method")
     )
+    method = (method or "").upper()
 
     # Path parameters for {code}
     path_params = event.get("pathParameters") or {}
@@ -107,16 +109,19 @@ def lambda_handler(event, context):
         except ValueError as e:
             return response(400, {"error": str(e)})
 
-        # Optional TTL
-        ttl_seconds = payload.get("ttl_seconds")
-        ttl_epoch = int(time.time()) + int(ttl_seconds) if ttl_seconds else None
+        # TTL via environment (0 = disabled)
+        try:
+            ttl_days = int(os.getenv("TTL_DAYS", "0"))
+        except ValueError:
+            ttl_days = 0
+        ttl_epoch = int(time.time()) + ttl_days * 24 * 3600 if ttl_days > 0 else None
 
         # Generate a unique code (retry on collision)
         for _ in range(5):
             code = random_code()
             try:
-                put_mapping(code, long_url, ttl_epoch)
-                logger.info("Created mapping %s -> %s", code, long_url)
+                put_mapping(code, long_url, ttl_epoch)  # will include expiresAt if provided
+                logger.info("Created mapping %s -> %s (ttl_days=%s)", code, long_url, ttl_days)
                 return response(201, {"shortcode": code, "long_url": long_url})
             except ClientError as ce:
                 if ce.response["Error"]["Code"] == "ConditionalCheckFailedException":

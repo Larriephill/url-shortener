@@ -1,4 +1,4 @@
-# OIDC trust for APPLY role: only our repo + environment "dev"
+
 data "aws_iam_policy_document" "gha_oidc_trust_apply" {
   statement {
     actions = ["sts:AssumeRoleWithWebIdentity"]
@@ -15,7 +15,7 @@ data "aws_iam_policy_document" "gha_oidc_trust_apply" {
       values   = ["sts.amazonaws.com"]
     }
 
-    # Job must run in the GitHub Environment 'dev'
+    # Only jobs running in environment "dev" (allow both repo casings)
     condition {
       test     = "StringEquals"
       variable = "token.actions.githubusercontent.com:sub"
@@ -30,17 +30,29 @@ data "aws_iam_policy_document" "gha_oidc_trust_apply" {
 resource "aws_iam_role" "gha_apply" {
   name               = "url-dev-gha-apply"
   assume_role_policy = data.aws_iam_policy_document.gha_oidc_trust_apply.json
+
+  # Prevents Terraform from ever trying to change the role description
+  lifecycle {
+    ignore_changes = [description]
+  }
 }
 
-# Minimal permissions: remote backend (S3+DDB) with WRITE so apply can update state.
+
+# ---- BACKEND (S3 + DDB lock) — WRITE + reads terraform needs ----
+
 data "aws_iam_policy_document" "gha_apply_backend" {
+  # List & metadata on the state bucket
   statement {
-    sid       = "S3BucketList"
-    effect    = "Allow"
-    actions   = ["s3:ListBucket"]
+    sid    = "S3BucketMetaReads"
+    effect = "Allow"
+    actions = [
+      "s3:ListBucket",
+      "s3:Get*"
+    ]
     resources = ["arn:aws:s3:::urlshortenerlarriephill"]
   }
 
+  # Read/Write state objects
   statement {
     sid       = "S3StateRw"
     effect    = "Allow"
@@ -48,6 +60,7 @@ data "aws_iam_policy_document" "gha_apply_backend" {
     resources = ["arn:aws:s3:::urlshortenerlarriephill/*"]
   }
 
+  # DDB state lock + backups describe
   statement {
     sid    = "DDBStateLock"
     effect = "Allow"
@@ -55,15 +68,20 @@ data "aws_iam_policy_document" "gha_apply_backend" {
       "dynamodb:DescribeTable",
       "dynamodb:GetItem",
       "dynamodb:PutItem",
-      "dynamodb:DeleteItem"
+      "dynamodb:DeleteItem",
+      "dynamodb:DescribeContinuousBackups",
+      "dynamodb:ListTagsOfResource"
     ]
     resources = ["arn:aws:dynamodb:eu-west-2:416162027738:table/tf-lock-dev"]
   }
 }
 
+
+
+
 resource "aws_iam_policy" "gha_apply_backend" {
   name        = "url-dev-gha-apply-backend"
-  description = "Backend write for Terraform apply (S3+DDB lock)"
+  description = "Backend (S3+DDB lock) RW for Terraform apply; includes required reads"
   policy      = data.aws_iam_policy_document.gha_apply_backend.json
 }
 
@@ -72,17 +90,12 @@ resource "aws_iam_role_policy_attachment" "gha_apply_attach_backend" {
   policy_arn = aws_iam_policy.gha_apply_backend.arn
 }
 
-# Read-only IAM so Terraform can refresh roles/policies/OIDC/etc.
+# ---- IAM READ for refresh (no writes) ----
 data "aws_iam_policy_document" "gha_apply_iam_read" {
   statement {
-    sid    = "IamReadOnly"
-    effect = "Allow"
-    # List/Get are required for refresh; no write actions here.
-    actions = [
-      "iam:Get*",
-      "iam:List*"
-    ]
-    # Many IAM List* actions require resource "*"
+    sid       = "IamReadOnly"
+    effect    = "Allow"
+    actions   = ["iam:Get*", "iam:List*"]
     resources = ["*"]
   }
 }
@@ -98,9 +111,9 @@ resource "aws_iam_role_policy_attachment" "gha_apply_attach_iam_read" {
   policy_arn = aws_iam_policy.gha_apply_iam_read.arn
 }
 
-# ---- App deploy permissions (region-scoped) ----
+# ---- APP DEPLOY perms (region-scoped where possible) ----
 data "aws_iam_policy_document" "gha_apply_app" {
-  # Lambda (create/update function code/config, aliases, permissions)
+  # Lambda
   statement {
     sid    = "LambdaManage"
     effect = "Allow"
@@ -119,7 +132,7 @@ data "aws_iam_policy_document" "gha_apply_app" {
     }
   }
 
-  # API Gateway v2 (HTTP APIs)
+  # API Gateway v2 control-plane
   statement {
     sid       = "ApiGatewayV2Manage"
     effect    = "Allow"
@@ -132,27 +145,30 @@ data "aws_iam_policy_document" "gha_apply_app" {
     }
   }
 
-  # DynamoDB (table lifecycle & TTL)
+  # DynamoDB (tables, TTL, backups describe)
   statement {
     sid    = "DynamoDbManageTables"
     effect = "Allow"
     actions = [
       "dynamodb:CreateTable", "dynamodb:UpdateTable", "dynamodb:DeleteTable",
       "dynamodb:DescribeTable", "dynamodb:ListTagsOfResource", "dynamodb:TagResource", "dynamodb:UntagResource",
-      "dynamodb:UpdateTimeToLive", "dynamodb:DescribeTimeToLive", "dynamodb:ListTables"
+      "dynamodb:UpdateTimeToLive", "dynamodb:DescribeTimeToLive", "dynamodb:ListTables",
+      "dynamodb:DescribeContinuousBackups"
     ]
     resources = ["arn:aws:dynamodb:eu-west-2:416162027738:table/*"]
   }
 
-  # CloudWatch Logs & Alarms
+  # CloudWatch Logs + CloudWatch (incl. Logs tag reads)
   statement {
     sid    = "LogsAndCloudWatch"
     effect = "Allow"
     actions = [
       "logs:CreateLogGroup", "logs:CreateLogStream", "logs:PutRetentionPolicy",
       "logs:DeleteLogGroup", "logs:DescribeLogGroups", "logs:DescribeLogStreams",
+      "logs:ListTagsForResource",
       "cloudwatch:PutMetricAlarm", "cloudwatch:DeleteAlarms", "cloudwatch:DescribeAlarms",
-      "cloudwatch:TagResource", "cloudwatch:UntagResource"
+      "cloudwatch:TagResource", "cloudwatch:UntagResource",
+      "cloudwatch:ListTagsForResource"
     ]
     resources = ["*"]
     condition {
@@ -162,7 +178,7 @@ data "aws_iam_policy_document" "gha_apply_app" {
     }
   }
 
-  # IAM operations needed for Lambda execution roles & managed policies used by this stack
+  # IAM needed for lambda exec roles & customer policies used by this stack
   statement {
     sid    = "IamForLambdaExec"
     effect = "Allow"
@@ -177,7 +193,7 @@ data "aws_iam_policy_document" "gha_apply_app" {
     resources = [
       "arn:aws:iam::416162027738:role/url-*",
       "arn:aws:iam::416162027738:role/*lambda*",
-      "arn:aws:iam::416162027738:policy/url_*",
+      "arn:aws:iam::416162027738:policy/url-*",
       "arn:aws:iam::416162027738:policy/*lambda*"
     ]
   }
@@ -185,12 +201,65 @@ data "aws_iam_policy_document" "gha_apply_app" {
 
 resource "aws_iam_policy" "gha_apply_app" {
   name        = "url-dev-gha-apply-app"
-  description = "Permissions for Lambda, API GW v2, DynamoDB, Logs, CW (eu-west-2)"
+  description = "Deploy perms for Lambda, API GW v2, DynamoDB, Logs, CW (eu-west-2)"
   policy      = data.aws_iam_policy_document.gha_apply_app.json
 }
 
 resource "aws_iam_role_policy_attachment" "gha_apply_attach_app" {
   role       = aws_iam_role.gha_apply.name
   policy_arn = aws_iam_policy.gha_apply_app.arn
+}
+
+# ---- Manage our url-* customer-managed policies precisely ----
+data "aws_iam_policy_document" "gha_apply_manage_url_policies" {
+  statement {
+    sid    = "ManageUrlPolicies"
+    effect = "Allow"
+    actions = [
+      "iam:GetPolicy",
+      "iam:ListPolicyVersions",
+      "iam:CreatePolicy",
+      "iam:CreatePolicyVersion",
+      "iam:SetDefaultPolicyVersion",
+      "iam:DeletePolicyVersion",
+      "iam:DeletePolicy"
+    ]
+    resources = [
+      "arn:aws:iam::416162027738:policy/url-*",
+      "arn:aws:iam::416162027738:policy/url_*"
+    ]
+  }
+}
+
+resource "aws_iam_policy" "gha_apply_manage_url_policies" {
+  name        = "url-dev-gha-apply-manage-url-policies"
+  description = "Allow apply role to manage url-* customer-managed policies"
+  policy      = data.aws_iam_policy_document.gha_apply_manage_url_policies.json
+}
+
+resource "aws_iam_role_policy_attachment" "gha_apply_attach_manage_url_policies" {
+  role       = aws_iam_role.gha_apply.name
+  policy_arn = aws_iam_policy.gha_apply_manage_url_policies.arn
+}
+
+# Allow this role to update its own description (needed due to provider behavior)
+data "aws_iam_policy_document" "gha_apply_self_desc" {
+  statement {
+    sid       = "UpdateOwnDescription"
+    effect    = "Allow"
+    actions   = ["iam:UpdateRoleDescription"]
+    resources = ["arn:aws:iam::416162027738:role/url-dev-gha-apply"]
+  }
+}
+
+resource "aws_iam_policy" "gha_apply_self_desc" {
+  name        = "url-dev-gha-apply-self-desc"
+  description = "Allow apply role to update its own description only"
+  policy      = data.aws_iam_policy_document.gha_apply_self_desc.json
+}
+
+resource "aws_iam_role_policy_attachment" "gha_apply_attach_self_desc" {
+  role       = aws_iam_role.gha_apply.name
+  policy_arn = aws_iam_policy.gha_apply_self_desc.arn
 }
 
