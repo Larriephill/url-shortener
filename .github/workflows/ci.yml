@@ -2,63 +2,15 @@ name: ci-dev
 
 on:
   push:
-    branches: [ "dev" ]
+    branches: [main]
   pull_request:
-    branches: [ "dev" ]
-
-permissions:
-  id-token: write   # for OIDC
-  contents: read
-
-env:
-  TF_WORKING_DIR: terraform
-  AWS_REGION: eu-west-2
-  TF_VAR_stage: dev
-  TF_IN_AUTOMATION: "1"
+    branches: [main]
 
 jobs:
-  plan-and-smoke:
+  integration-test:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: 1.9.5
-
-      - name: Terraform fmt (check only)
-        working-directory: ${{ env.TF_WORKING_DIR }}
-        run: terraform fmt -recursive -check
-
-      - name: Configure AWS (OIDC)
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: arn:aws:iam::416162027738:role/url-dev-gha-plan
-          aws-region: ${{ env.AWS_REGION }}
-
-      - name: Terraform init (remote backend)
-        working-directory: ${{ env.TF_WORKING_DIR }}
-        run: terraform init -input=false -upgrade
-
-      - name: Terraform validate
-        working-directory: ${{ env.TF_WORKING_DIR }}
-        run: terraform validate
-
-      - name: Terraform plan
-        working-directory: ${{ env.TF_WORKING_DIR }}
-        run: terraform plan -input=false -no-color -var="stage=${{ env.TF_VAR_stage }}"
-
-      - name: Read API URL from state
-        id: tfout
-        working-directory: ${{ env.TF_WORKING_DIR }}
-        run: echo "api=$(terraform output -raw api_base_url)" >> "$GITHUB_OUTPUT"
-
-      - name: Smoke test (POST/GET)
-        env:
-          API_URL: ${{ steps.tfout.outputs.api }}
+      - name: Run integration test
         run: |
           set -euo pipefail
           RESP=$(curl -sS -X POST "$API_URL/" -H 'Content-Type: application/json' -d '{"url":"example.com"}')
@@ -69,7 +21,8 @@ jobs:
 
   security-scan:
     runs-on: ubuntu-latest
-
+    env:
+      TF_WORKING_DIR: ./terraform  # Set this to your actual working directory
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -87,3 +40,26 @@ jobs:
           framework: terraform
           quiet: true
           soft_fail: true
+
+  unit-tests:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install test dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r lambda/requirements-dev.txt
+
+      - name: Run pytest
+        env:
+          PYTHONPATH: ./lambda
+        run: pytest -q
