@@ -13,18 +13,34 @@ from botocore.exceptions import ClientError
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
-# -------- config --------
-TABLE_NAME = os.environ.get("TABLE", "")
-if not TABLE_NAME:
-    # We'll set TABLE with Terraform when we create the Lambda resource.
-    logger.warning("Environment variable TABLE is not set yet.")
-
-ddb = boto3.resource("dynamodb").Table(TABLE_NAME) if TABLE_NAME else None
-
+# -------- config / constants --------
 ALPHABET = ascii_letters + digits  # a-zA-Z0-9
 CODE_LEN = 6
 URL_RE = re.compile(r"^(https?://)?([A-Za-z0-9.-]+\.[A-Za-z]{2,})(:[0-9]+)?(/.*)?$")
 
+# -------- DynamoDB table (lazy, cached) --------
+_DDB_TABLE = None
+
+def _get_table():
+    """Lazily create and cache the DynamoDB Table object."""
+    global _DDB_TABLE
+    if _DDB_TABLE is None:
+        table_name = os.environ["TABLE_NAME"]            # must be set
+        region = os.environ.get("AWS_REGION", "eu-west-2")
+        _DDB_TABLE = boto3.resource("dynamodb", region_name=region).Table(table_name)
+    return _DDB_TABLE
+
+def put_mapping(shortcode: str, long_url: str, ttl_epoch: int | None = None):
+    """Write mapping; optionally include TTL attribute if you enable TTL."""
+    item = {"shortcode": shortcode, "url": long_url}
+    if ttl_epoch is not None:
+        item["expiresAt"] = ttl_epoch                   # your TTL attribute name
+    _get_table().put_item(Item=item, ConditionExpression="attribute_not_exists(shortcode)")
+
+def get_mapping(shortcode: str):
+    """Read mapping by shortcode."""
+    resp = _get_table().get_item(Key={"shortcode": shortcode})
+    return resp.get("Item")
 
 # -------- helpers (pure functions where possible) --------
 def normalize_url(url: str) -> str:
@@ -45,10 +61,8 @@ def normalize_url(url: str) -> str:
         url = "https://" + url
     return url
 
-
 def random_code(n: int = CODE_LEN) -> str:
     return "".join(choice(ALPHABET) for _ in range(n))
-
 
 def response(status: int, body=None, headers=None):
     """Standard Lambda proxy V2 style response."""
@@ -58,26 +72,6 @@ def response(status: int, body=None, headers=None):
     if body is None or isinstance(body, (dict, list)):
         body = json.dumps(body or {})
     return {"statusCode": status, "headers": base_headers, "body": body}
-
-
-# -------- DynamoDB operations --------
-def put_mapping(shortcode: str, long_url: str, ttl_epoch: int | None = None):
-    item = {"shortcode": shortcode, "url": long_url}
-    if ttl_epoch:
-        item["expiresAt"] = ttl_epoch  # only if you enabled TTL on the table
-
-    # Avoid overwriting an existing code
-    ddb.put_item(
-        Item=item,
-        ConditionExpression="attribute_not_exists(shortcode)"
-    )
-
-
-def get_mapping(shortcode: str) -> str | None:
-    res = ddb.get_item(Key={"shortcode": shortcode})
-    item = res.get("Item")
-    return item["url"] if item else None
-
 
 # -------- main handler --------
 def lambda_handler(event, context):
@@ -91,8 +85,8 @@ def lambda_handler(event, context):
 
     # Detect HTTP method for both REST and HTTP API events
     method = (
-        event.get("httpMethod") or
-        event.get("requestContext", {}).get("http", {}).get("method")
+        event.get("httpMethod")
+        or event.get("requestContext", {}).get("http", {}).get("method")
     )
 
     # Path parameters for {code}
@@ -133,10 +127,11 @@ def lambda_handler(event, context):
         return response(503, {"error": "Could not generate unique shortcode"})
 
     elif method == "GET" and code_param:
-        url = get_mapping(code_param)
-        if not url:
+        item = get_mapping(code_param)
+        if not item:
             return response(404, {"error": "Shortcode not found"})
 
+        url = item["url"]
         # 302 redirect (body can be empty)
         return {
             "statusCode": 302,
