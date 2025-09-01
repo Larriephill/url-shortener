@@ -33,31 +33,84 @@ resource "aws_iam_role" "gha_plan" {
 
 data "aws_iam_policy_document" "gha_plan_backend" {
   statement {
-    sid       = "S3ListBucket"
-    effect    = "Allow"
-    actions   = ["s3:ListBucket"]
-    resources = ["arn:aws:s3:::urlshortenerlarriephill"]
+    sid     = "ApiGatewayV2Read"
+    actions = ["apigateway:GET"]
+    resources = [
+      "arn:aws:apigateway:${data.aws_region.current.name}::/apis*"
+    ]
   }
 
   statement {
-    sid       = "S3GetState"
-    effect    = "Allow"
-    actions   = ["s3:GetObject"]
-    resources = ["arn:aws:s3:::urlshortenerlarriephill/*"]
+    sid       = "CloudWatchLogsDescribe"
+    actions   = ["logs:DescribeLogGroups"]
+    resources = ["*"]
   }
 
   statement {
-    sid    = "DDBStateLock"
-    effect = "Allow"
+    sid = "IamRead"
+    actions = [
+      "iam:GetRole",
+      "iam:GetPolicy",
+      "iam:ListPolicyVersions",
+      "iam:GetOpenIDConnectProvider"
+    ]
+    resources = [
+      "arn:aws:iam::${data.aws_caller_identity.me.account_id}:role/url-*",
+      "arn:aws:iam::${data.aws_caller_identity.me.account_id}:policy/url-*",
+      "arn:aws:iam::${data.aws_caller_identity.me.account_id}:oidc-provider/token.actions.githubusercontent.com"
+    ]
+  }
+
+  statement {
+    sid = "DynamoDbDescribe"
     actions = [
       "dynamodb:DescribeTable",
+      "dynamodb:DescribeContinuousBackups"
+    ]
+    resources = [
+      "arn:aws:dynamodb:${data.aws_region.current.name}:${data.aws_caller_identity.me.account_id}:table/*"
+    ]
+  }
+
+  statement {
+    sid = "S3BackendRead"
+    actions = [
+      "s3:GetBucketPolicy",
+      "s3:GetBucketLocation",
+      "s3:GetBucketVersioning",
+      "s3:GetBucketTagging",
+      "s3:GetEncryptionConfiguration",
+      "s3:GetPublicAccessBlock",
+      "s3:ListBucket"
+    ]
+    resources = [
+      aws_s3_bucket.tf_state.arn
+    ]
+  }
+
+  statement {
+    sid = "DynamoDbLockWrite"
+    actions = [
       "dynamodb:GetItem",
       "dynamodb:PutItem",
-      "dynamodb:DeleteItem"
+      "dynamodb:DeleteItem",
+      "dynamodb:UpdateItem"
     ]
-    resources = ["arn:aws:dynamodb:eu-west-2:416162027738:table/tf-lock-dev"]
+    resources = [
+      aws_dynamodb_table.tf_lock.arn
+    ]
+  }
+
+  statement {
+    sid     = "S3BackendObjectsRead"
+    actions = ["s3:GetObject", "s3:ListBucketMultipartUploads"]
+    resources = [
+      "${aws_s3_bucket.tf_state.arn}/*"
+    ]
   }
 }
+
+
 
 resource "aws_iam_policy" "gha_plan_backend" {
   name        = "url-dev-gha-plan-backend"

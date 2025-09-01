@@ -37,8 +37,10 @@ resource "aws_lambda_function" "url" {
   # env var to tell the code which table to use
   environment {
     variables = {
-      TABLE    = aws_dynamodb_table.urls.name
-      TTL_DAYS = var.ttl_days
+      TABLE           = aws_dynamodb_table.urls.name
+      TTL_DAYS        = var.ttl_days
+      STAGE           = var.stage
+      METRICS_ENABLED = "true"
     }
   }
 

@@ -69,6 +69,30 @@ resource "aws_iam_role_policy_attachment" "attach_dynamodb" {
   policy_arn = aws_iam_policy.lambda_dynamodb.arn
 }
 
+
+data "aws_iam_policy_document" "lambda_metrics" {
+  statement {
+    sid       = "PutCustomMetrics"
+    actions   = ["cloudwatch:PutMetricData"]
+    resources = ["*"] # PutMetricData doesn’t support resource ARNs
+    condition {
+      test     = "StringEquals"
+      variable = "cloudwatch:namespace"
+      values   = ["UrlShortener"]
+    }
+  }
+}
+
+resource "aws_iam_policy" "lambda_metrics" {
+  name   = "url_lambda_metrics_${var.stage}"
+  policy = data.aws_iam_policy_document.lambda_metrics.json
+}
+
+resource "aws_iam_role_policy_attachment" "attach_metrics" {
+  role       = aws_iam_role.lambda.name
+  policy_arn = aws_iam_policy.lambda_metrics.arn
+}
+
 # (Optional) Output for convenience
 output "lambda_role_arn" {
   value       = aws_iam_role.lambda.arn
