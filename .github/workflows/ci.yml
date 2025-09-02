@@ -36,7 +36,6 @@ jobs:
       contents: read
     env:
       AWS_DEFAULT_REGION: eu-west-2
-      TABLE: urls_test
 
     steps:
       - uses: actions/checkout@v4
