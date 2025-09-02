@@ -37,7 +37,6 @@ jobs:
     env:
       AWS_DEFAULT_REGION: eu-west-2
       TABLE: urls_test
-      PYTHONPATH: ./lambda
 
     steps:
       - uses: actions/checkout@v4
@@ -50,21 +49,28 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r lambda/requirements-dev.txt
-          pip install moto pytest
 
+      # Sanity step to verify the handler file that CI is using
       - name: Sanity: show handler version
         run: |
           python - <<'PY'
-          import inspect, importlib, sys, os
+          import importlib, sys, os
           sys.path.insert(0, os.path.join(os.getcwd(), "lambda"))
           h = importlib.import_module("handler")
           print("HANDLER FILE:", h.__file__)
           print("HAS _parse_body:", hasattr(h, "_parse_body"))
-          print("HANDLER HEAD:\n", "".join(open(h.__file__, "r", encoding="utf-8").read().splitlines()[:20]))
+          try:
+              with open(h.__file__, "r", encoding="utf-8") as f:
+                  head = "".join(f.readlines()[:20])
+          except Exception as e:
+              head = f"<unable to read file: {e}>"
+          print("HANDLER HEAD:\n", head)
           PY
 
       - name: Run pytest
-        run: pytest -q tests/test_handler.py
+        env:
+          PYTHONPATH: ./lambda
+        run: pytest -q
 
   plan-and-smoke:
     runs-on: ubuntu-latest
