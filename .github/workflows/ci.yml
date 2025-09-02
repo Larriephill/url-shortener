@@ -34,6 +34,9 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+    env:
+      AWS_DEFAULT_REGION: eu-west-2
+
     steps:
       - uses: actions/checkout@v4
 
@@ -61,6 +64,7 @@ jobs:
       AWS_REGION: eu-west-2
       TF_VAR_stage: dev
       TF_IN_AUTOMATION: "1"
+
     steps:
       - uses: actions/checkout@v4
 
