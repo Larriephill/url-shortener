@@ -51,7 +51,7 @@ jobs:
           pip install -r lambda/requirements-dev.txt
 
       # Sanity step to verify the handler file that CI is using
-      - name: Sanity: show handler version
+      - name: Sanity show handler version
         run: |
           python - <<'PY'
           import importlib, sys, os
