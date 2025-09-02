@@ -9,3 +9,12 @@ variable "ttl_days" {
   type        = number
   default     = 30
 }
+variable "domain_zone_name" {
+  type    = string
+  default = "regalhorizon.click"
+}
+
+variable "api_subdomain" {
+  type    = string
+  default = "api"
+} # => api.regalhorizon.click
