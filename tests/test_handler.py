@@ -25,11 +25,11 @@ def test_post_then_get_redirects():
     )
 
     # POST to create
-    post_event = {"httpMethod": "POST", "body": {"url": "example.com"}}
+    post_event = {"httpMethod": "POST", "body": json.dumps({"url": "example.com"})}
     post_res = lambda_handler(post_event, {})
     assert post_res["statusCode"] == 201
     body = json.loads(post_res["body"]) if isinstance(post_res["body"], str) else post_res["body"]
-    code = body["shortcode"]
+    code = body["short"]
     assert code
 
     # GET to resolve
@@ -56,7 +56,7 @@ def test_post_sets_ttl_and_get_redirects():
     )
 
     # POST -> creates item with expiresAt
-    post_event = {"httpMethod": "POST", "body": {"url": "example.com"}}
+    post_event = {"httpMethod": "POST", "body": json.dumps({"url": "example.com"})}
     post_res = lambda_handler(post_event, {})
     assert post_res["statusCode"] == 201
     body = json.loads(post_res["body"]) if isinstance(post_res["body"], str) else post_res["body"]
@@ -67,7 +67,7 @@ def test_post_sets_ttl_and_get_redirects():
     item = ddb.get_item(TableName=TABLE, Key={"shortcode": {"S": code}}).get("Item", {})
     assert "expiresAt" in item, "TTL attribute missing"
     ttl_val = int(item["expiresAt"]["N"])
-    assert ttl_val > int(time.time()) + 60, "TTL should be in the future"
+    assert ttl_attr and int(ttl_attr["N"]) > int(time.time()) + 60 "TTL should be in the future"
 
     # GET -> 302 redirect still works
     get_event = {"httpMethod": "GET", "pathParameters": {"code": code}}
