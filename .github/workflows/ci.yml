@@ -114,7 +114,13 @@ jobs:
       - name: Read API URL from state
         id: tfout
         working-directory: ${{ env.TF_WORKING_DIR }}
-        run: echo "api=$(terraform output -raw api_base_url)" >> "$GITHUB_OUTPUT"
+        run: |
+         if terraform output -raw cloudfront_url >/dev/null 2>&1; then
+           echo "api=$(terraform output -raw cloudfront_url)" >> "$GITHUB_OUTPUT"
+         else
+           echo "api=$(terraform output -raw api_base_url)" >> "$GITHUB_OUTPUT"
+         fi
+
 
       - name: Smoke test (POST/GET)
         env:
