@@ -1,11 +1,38 @@
 output "table_name" {
-  description = "DynamoDB table name"
+  description = "Name of the DynamoDB table used for storing URL mappings"
   value       = aws_dynamodb_table.urls.name
 }
 
-# outputs.tf
-output "api_custom_domain" { value = aws_apigatewayv2_domain_name.api.domain_name }
-output "api_custom_url" { value = "https://${aws_apigatewayv2_domain_name.api.domain_name}" }
-output "api_id" { value = aws_apigatewayv2_api.http.id }
-output "stage_name" { value = "$default" }
+# API Gateway Outputs
+output "api_id" {
+  description = "ID of the HTTP API Gateway"
+  value       = aws_apigatewayv2_api.http.id
+}
+
+output "api_custom_domain" {
+  description = "Custom domain name configured for the API Gateway"
+  value       = aws_apigatewayv2_domain_name.api.domain_name
+}
+
+output "api_custom_url" {
+  description = "Fully qualified custom URL for the API Gateway"
+  value       = "https://${aws_apigatewayv2_domain_name.api.domain_name}"
+}
+
+output "stage_name" {
+  description = "Name of the default deployment stage"
+  value       = "$default"
+}
+
+output "stage_arn" {
+  description = "ARN of the API Gateway deployment stage"
+  value       = aws_apigatewayv2_stage.default.arn
+}
+
+# Safe: returns null when CloudFront/WAF is disabled (count = 0)
+output "waf_web_acl_arn" {
+  value       = length(aws_wafv2_web_acl.cf) > 0 ? aws_wafv2_web_acl.cf[0].arn : null
+  description = "ARN of the CloudFront-scoped WAFv2 Web ACL (null if CloudFront disabled)"
+}
+
 

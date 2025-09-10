@@ -1,0 +1,3569 @@
+{
+  "version": 4,
+  "terraform_version": "1.9.5",
+  "serial": 67,
+  "lineage": "b3da04d9-7584-57b5-0265-80b4ea2ad9fe",
+  "outputs": {
+    "api_base_url": {
+      "value": "https://764zo42j23.execute-api.eu-west-2.amazonaws.com",
+      "type": "string"
+    },
+    "api_custom_domain": {
+      "value": "api.regalhorizon.click",
+      "type": "string"
+    },
+    "api_custom_url": {
+      "value": "https://api.regalhorizon.click",
+      "type": "string"
+    },
+    "api_id": {
+      "value": "764zo42j23",
+      "type": "string"
+    },
+    "get_url_example": {
+      "value": "https://764zo42j23.execute-api.eu-west-2.amazonaws.com/{code}",
+      "type": "string"
+    },
+    "lambda_arn": {
+      "value": "arn:aws:lambda:eu-west-2:416162027738:function:url-dev",
+      "type": "string"
+    },
+    "lambda_name": {
+      "value": "url-dev",
+      "type": "string"
+    },
+    "lambda_role_arn": {
+      "value": "arn:aws:iam::416162027738:role/url_lambda_role_dev",
+      "type": "string"
+    },
+    "post_url": {
+      "value": "https://764zo42j23.execute-api.eu-west-2.amazonaws.com/",
+      "type": "string"
+    },
+    "stage_arn": {
+      "value": "arn:aws:apigateway:eu-west-2::/apis/764zo42j23/stages/$default",
+      "type": "string"
+    },
+    "stage_name": {
+      "value": "$default",
+      "type": "string"
+    },
+    "table_name": {
+      "value": "urls_dev",
+      "type": "string"
+    },
+    "tf_lock_table": {
+      "value": "tf-lock-dev",
+      "type": "string"
+    },
+    "tf_state_bucket": {
+      "value": "urlshortenerlarriephill",
+      "type": "string"
+    },
+    "waf_web_acl_arn": {
+      "value": "arn:aws:wafv2:us-east-1:416162027738:global/webacl/url-shortener-dev-cf/65377b25-8503-4d0f-999e-e36edf0fa9d4",
+      "type": "string"
+    }
+  },
+  "resources": [
+    {
+      "mode": "data",
+      "type": "archive_file",
+      "name": "lambda_zip",
+      "provider": "provider[\"registry.terraform.io/hashicorp/archive\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "exclude_symlink_directories": null,
+            "excludes": null,
+            "id": "b6933a119dbb48ade5e4d47c345a2789b98b6eb9",
+            "output_base64sha256": "nmos1fTLNfp36i5IkDlF+oZ5DQkePJ2sFzhRQKnUePw=",
+            "output_base64sha512": "20ikrjp2Vs9PYQ6mDCTXnjgUpDzAIbg5xRJFQMft2bgx+mPiodH9QIc92gOpSh1sMuhgntXa4Yiw0D1wE0lG9w==",
+            "output_file_mode": null,
+            "output_md5": "6dab6ef6863161cac877fcd407e7e268",
+            "output_path": "./lambda.zip",
+            "output_sha": "b6933a119dbb48ade5e4d47c345a2789b98b6eb9",
+            "output_sha256": "9e6a2cd5f4cb35fa77ea2e48903945fa86790d091e3c9dac17385140a9d478fc",
+            "output_sha512": "db48a4ae3a7656cf4f610ea60c24d79e3814a43cc021b839c5124540c7edd9b831fa63e2a1d1fd40873dda03a94a1d6c32e8609ed5dae188b0d03d70134946f7",
+            "output_size": 4070,
+            "source": [],
+            "source_content": null,
+            "source_content_filename": null,
+            "source_dir": "./../lambda",
+            "source_file": null,
+            "type": "zip"
+          },
+          "sensitive_attributes": []
+        }
+      ]
+    },
+    {
+      "mode": "data",
+      "type": "aws_caller_identity",
+      "name": "me",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "account_id": "416162027738",
+            "arn": "arn:aws:iam::416162027738:user/Terraform",
+            "id": "416162027738",
+            "user_id": "AIDAWBZJQTDNCIN66JAOO"
+          },
+          "sensitive_attributes": []
+        }
+      ]
+    },
+    {
+      "mode": "data",
+      "type": "aws_caller_identity",
+      "name": "use1",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"].us_east_1",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "account_id": "416162027738",
+            "arn": "arn:aws:iam::416162027738:user/Terraform",
+            "id": "416162027738",
+            "user_id": "AIDAWBZJQTDNCIN66JAOO"
+          },
+          "sensitive_attributes": []
+        }
+      ]
+    },
+    {
+      "mode": "data",
+      "type": "aws_cloudfront_cache_policy",
+      "name": "disabled",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "arn": "arn:aws:cloudfront::416162027738:cache-policy/4135ea2d-6df8-44a3-9df3-4b5a84be39ad",
+            "comment": "Policy with caching disabled",
+            "default_ttl": 0,
+            "etag": "E23ZP02F085DFQ",
+            "id": "4135ea2d-6df8-44a3-9df3-4b5a84be39ad",
+            "max_ttl": 0,
+            "min_ttl": 0,
+            "name": "Managed-CachingDisabled",
+            "parameters_in_cache_key_and_forwarded_to_origin": [
+              {
+                "cookies_config": [
+                  {
+                    "cookie_behavior": "none",
+                    "cookies": []
+                  }
+                ],
+                "enable_accept_encoding_brotli": false,
+                "enable_accept_encoding_gzip": false,
+                "headers_config": [
+                  {
+                    "header_behavior": "none",
+                    "headers": []
+                  }
+                ],
+                "query_strings_config": [
+                  {
+                    "query_string_behavior": "none",
+                    "query_strings": []
+                  }
+                ]
+              }
+            ]
+          },
+          "sensitive_attributes": []
+        }
+      ]
+    },
+    {
+      "mode": "data",
+      "type": "aws_cloudfront_origin_request_policy",
+      "name": "all_viewer",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "arn": "arn:aws:cloudfront::416162027738:origin-request-policy/216adef6-5c7f-47e4-b989-5492eafa07d3",
+            "comment": "Policy to forward all parameters in viewer requests",
+            "cookies_config": [
+              {
+                "cookie_behavior": "all",
+                "cookies": []
+              }
+            ],
+            "etag": "E23ZP02F085DFQ",
+            "headers_config": [
+              {
+                "header_behavior": "allViewer",
+                "headers": []
+              }
+            ],
+            "id": "216adef6-5c7f-47e4-b989-5492eafa07d3",
+            "name": "Managed-AllViewer",
+            "query_strings_config": [
+              {
+                "query_string_behavior": "all",
+                "query_strings": []
+              }
+            ]
+          },
+          "sensitive_attributes": []
+        }
+      ]
+    },
+    {
+      "mode": "data",
+      "type": "aws_iam_policy_document",
+      "name": "gha_apply_app",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "id": "281421602",
+            "json": "{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Sid\": \"LambdaManage\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"lambda:UpdateFunctionConfiguration\",\n        \"lambda:UpdateFunctionCode\",\n        \"lambda:UpdateAlias\",\n        \"lambda:UntagResource\",\n        \"lambda:TagResource\",\n        \"lambda:RemovePermission\",\n        \"lambda:PublishVersion\",\n        \"lambda:List*\",\n        \"lambda:Get*\",\n        \"lambda:DeleteFunction\",\n        \"lambda:DeleteAlias\",\n        \"lambda:CreateFunction\",\n        \"lambda:CreateAlias\",\n        \"lambda:AddPermission\"\n      ],\n      \"Resource\": \"*\",\n      \"Condition\": {\n        \"StringEquals\": {\n          \"aws:RequestedRegion\": \"eu-west-2\"\n        }\n      }\n    },\n    {\n      \"Sid\": \"ApiGatewayV2Manage\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"apigateway:PUT\",\n        \"apigateway:POST\",\n        \"apigateway:PATCH\",\n        \"apigateway:GET\",\n        \"apigateway:DELETE\"\n      ],\n      \"Resource\": \"*\",\n      \"Condition\": {\n        \"StringEquals\": {\n          \"aws:RequestedRegion\": \"eu-west-2\"\n        }\n      }\n    },\n    {\n      \"Sid\": \"DynamoDbManageTables\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"dynamodb:UpdateTimeToLive\",\n        \"dynamodb:UpdateTable\",\n        \"dynamodb:UntagResource\",\n        \"dynamodb:TagResource\",\n        \"dynamodb:ListTagsOfResource\",\n        \"dynamodb:ListTables\",\n        \"dynamodb:DescribeTimeToLive\",\n        \"dynamodb:DescribeTable\",\n        \"dynamodb:DescribeContinuousBackups\",\n        \"dynamodb:DeleteTable\",\n        \"dynamodb:CreateTable\"\n      ],\n      \"Resource\": \"arn:aws:dynamodb:eu-west-2:416162027738:table/*\"\n    },\n    {\n      \"Sid\": \"LogsAndCloudWatch\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"logs:PutRetentionPolicy\",\n        \"logs:ListTagsForResource\",\n        \"logs:DescribeLogStreams\",\n        \"logs:DescribeLogGroups\",\n        \"logs:DeleteLogGroup\",\n        \"logs:CreateLogStream\",\n        \"logs:CreateLogGroup\",\n        \"cloudwatch:UntagResource\",\n        \"cloudwatch:TagResource\",\n        \"cloudwatch:PutMetricAlarm\",\n        \"cloudwatch:ListTagsForResource\",\n        \"cloudwatch:DescribeAlarms\",\n        \"cloudwatch:DeleteAlarms\"\n      ],\n      \"Resource\": \"*\",\n      \"Condition\": {\n        \"StringEquals\": {\n          \"aws:RequestedRegion\": \"eu-west-2\"\n        }\n      }\n    },\n    {\n      \"Sid\": \"IamForLambdaExec\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"iam:UpdateRole\",\n        \"iam:UpdateAssumeRolePolicy\",\n        \"iam:UntagRole\",\n        \"iam:TagRole\",\n        \"iam:SetDefaultPolicyVersion\",\n        \"iam:PutRolePolicy\",\n        \"iam:PassRole\",\n        \"iam:ListRolePolicies\",\n        \"iam:ListAttachedRolePolicies\",\n        \"iam:GetRole\",\n        \"iam:DetachRolePolicy\",\n        \"iam:DeleteRolePolicy\",\n        \"iam:DeleteRole\",\n        \"iam:DeletePolicyVersion\",\n        \"iam:DeletePolicy\",\n        \"iam:CreateRole\",\n        \"iam:CreatePolicyVersion\",\n        \"iam:CreatePolicy\",\n        \"iam:AttachRolePolicy\"\n      ],\n      \"Resource\": [\n        \"arn:aws:iam::416162027738:role/url-*\",\n        \"arn:aws:iam::416162027738:role/*lambda*\",\n        \"arn:aws:iam::416162027738:policy/url-*\",\n        \"arn:aws:iam::416162027738:policy/*lambda*\"\n      ]\n    }\n  ]\n}",
+            "minified_json": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Sid\":\"LambdaManage\",\"Effect\":\"Allow\",\"Action\":[\"lambda:UpdateFunctionConfiguration\",\"lambda:UpdateFunctionCode\",\"lambda:UpdateAlias\",\"lambda:UntagResource\",\"lambda:TagResource\",\"lambda:RemovePermission\",\"lambda:PublishVersion\",\"lambda:List*\",\"lambda:Get*\",\"lambda:DeleteFunction\",\"lambda:DeleteAlias\",\"lambda:CreateFunction\",\"lambda:CreateAlias\",\"lambda:AddPermission\"],\"Resource\":\"*\",\"Condition\":{\"StringEquals\":{\"aws:RequestedRegion\":\"eu-west-2\"}}},{\"Sid\":\"ApiGatewayV2Manage\",\"Effect\":\"Allow\",\"Action\":[\"apigateway:PUT\",\"apigateway:POST\",\"apigateway:PATCH\",\"apigateway:GET\",\"apigateway:DELETE\"],\"Resource\":\"*\",\"Condition\":{\"StringEquals\":{\"aws:RequestedRegion\":\"eu-west-2\"}}},{\"Sid\":\"DynamoDbManageTables\",\"Effect\":\"Allow\",\"Action\":[\"dynamodb:UpdateTimeToLive\",\"dynamodb:UpdateTable\",\"dynamodb:UntagResource\",\"dynamodb:TagResource\",\"dynamodb:ListTagsOfResource\",\"dynamodb:ListTables\",\"dynamodb:DescribeTimeToLive\",\"dynamodb:DescribeTable\",\"dynamodb:DescribeContinuousBackups\",\"dynamodb:DeleteTable\",\"dynamodb:CreateTable\"],\"Resource\":\"arn:aws:dynamodb:eu-west-2:416162027738:table/*\"},{\"Sid\":\"LogsAndCloudWatch\",\"Effect\":\"Allow\",\"Action\":[\"logs:PutRetentionPolicy\",\"logs:ListTagsForResource\",\"logs:DescribeLogStreams\",\"logs:DescribeLogGroups\",\"logs:DeleteLogGroup\",\"logs:CreateLogStream\",\"logs:CreateLogGroup\",\"cloudwatch:UntagResource\",\"cloudwatch:TagResource\",\"cloudwatch:PutMetricAlarm\",\"cloudwatch:ListTagsForResource\",\"cloudwatch:DescribeAlarms\",\"cloudwatch:DeleteAlarms\"],\"Resource\":\"*\",\"Condition\":{\"StringEquals\":{\"aws:RequestedRegion\":\"eu-west-2\"}}},{\"Sid\":\"IamForLambdaExec\",\"Effect\":\"Allow\",\"Action\":[\"iam:UpdateRole\",\"iam:UpdateAssumeRolePolicy\",\"iam:UntagRole\",\"iam:TagRole\",\"iam:SetDefaultPolicyVersion\",\"iam:PutRolePolicy\",\"iam:PassRole\",\"iam:ListRolePolicies\",\"iam:ListAttachedRolePolicies\",\"iam:GetRole\",\"iam:DetachRolePolicy\",\"iam:DeleteRolePolicy\",\"iam:DeleteRole\",\"iam:DeletePolicyVersion\",\"iam:DeletePolicy\",\"iam:CreateRole\",\"iam:CreatePolicyVersion\",\"iam:CreatePolicy\",\"iam:AttachRolePolicy\"],\"Resource\":[\"arn:aws:iam::416162027738:role/url-*\",\"arn:aws:iam::416162027738:role/*lambda*\",\"arn:aws:iam::416162027738:policy/url-*\",\"arn:aws:iam::416162027738:policy/*lambda*\"]}]}",
+            "override_json": null,
+            "override_policy_documents": null,
+            "policy_id": null,
+            "source_json": null,
+            "source_policy_documents": null,
+            "statement": [
+              {
+                "actions": [
+                  "lambda:AddPermission",
+                  "lambda:CreateAlias",
+                  "lambda:CreateFunction",
+                  "lambda:DeleteAlias",
+                  "lambda:DeleteFunction",
+                  "lambda:Get*",
+                  "lambda:List*",
+                  "lambda:PublishVersion",
+                  "lambda:RemovePermission",
+                  "lambda:TagResource",
+                  "lambda:UntagResource",
+                  "lambda:UpdateAlias",
+                  "lambda:UpdateFunctionCode",
+                  "lambda:UpdateFunctionConfiguration"
+                ],
+                "condition": [
+                  {
+                    "test": "StringEquals",
+                    "values": [
+                      "eu-west-2"
+                    ],
+                    "variable": "aws:RequestedRegion"
+                  }
+                ],
+                "effect": "Allow",
+                "not_actions": [],
+                "not_principals": [],
+                "not_resources": [],
+                "principals": [],
+                "resources": [
+                  "*"
+                ],
+                "sid": "LambdaManage"
+              },
+              {
+                "actions": [
+                  "apigateway:DELETE",
+                  "apigateway:GET",
+                  "apigateway:PATCH",
+                  "apigateway:POST",
+                  "apigateway:PUT"
+                ],
+                "condition": [
+                  {
+                    "test": "StringEquals",
+                    "values": [
+                      "eu-west-2"
+                    ],
+                    "variable": "aws:RequestedRegion"
+                  }
+                ],
+                "effect": "Allow",
+                "not_actions": [],
+                "not_principals": [],
+                "not_resources": [],
+                "principals": [],
+                "resources": [
+                  "*"
+                ],
+                "sid": "ApiGatewayV2Manage"
+              },
+              {
+                "actions": [
+                  "dynamodb:CreateTable",
+                  "dynamodb:DeleteTable",
+                  "dynamodb:DescribeContinuousBackups",
+                  "dynamodb:DescribeTable",
+                  "dynamodb:DescribeTimeToLive",
+                  "dynamodb:ListTables",
+                  "dynamodb:ListTagsOfResource",
+                  "dynamodb:TagResource",
+                  "dynamodb:UntagResource",
+                  "dynamodb:UpdateTable",
+                  "dynamodb:UpdateTimeToLive"
+                ],
+                "condition": [],
+                "effect": "Allow",
+                "not_actions": [],
+                "not_principals": [],
+                "not_resources": [],
+                "principals": [],
+                "resources": [
+                  "arn:aws:dynamodb:eu-west-2:416162027738:table/*"
+                ],
+                "sid": "DynamoDbManageTables"
+              },
+              {
+                "actions": [
+                  "cloudwatch:DeleteAlarms",
+                  "cloudwatch:DescribeAlarms",
+                  "cloudwatch:ListTagsForResource",
+                  "cloudwatch:PutMetricAlarm",
+                  "cloudwatch:TagResource",
+                  "cloudwatch:UntagResource",
+                  "logs:CreateLogGroup",
+                  "logs:CreateLogStream",
+                  "logs:DeleteLogGroup",
+                  "logs:DescribeLogGroups",
+                  "logs:DescribeLogStreams",
+                  "logs:ListTagsForResource",
+                  "logs:PutRetentionPolicy"
+                ],
+                "condition": [
+                  {
+                    "test": "StringEquals",
+                    "values": [
+                      "eu-west-2"
+                    ],
+                    "variable": "aws:RequestedRegion"
+                  }
+                ],
+                "effect": "Allow",
+                "not_actions": [],
+                "not_principals": [],
+                "not_resources": [],
+                "principals": [],
+                "resources": [
+                  "*"
+                ],
+                "sid": "LogsAndCloudWatch"
+              },
+              {
+                "actions": [
+                  "iam:AttachRolePolicy",
+                  "iam:CreatePolicy",
+                  "iam:CreatePolicyVersion",
+                  "iam:CreateRole",
+                  "iam:DeletePolicy",
+                  "iam:DeletePolicyVersion",
+                  "iam:DeleteRole",
+                  "iam:DeleteRolePolicy",
+                  "iam:DetachRolePolicy",
+                  "iam:GetRole",
+                  "iam:ListAttachedRolePolicies",
+                  "iam:ListRolePolicies",
+                  "iam:PassRole",
+                  "iam:PutRolePolicy",
+                  "iam:SetDefaultPolicyVersion",
+                  "iam:TagRole",
+                  "iam:UntagRole",
+                  "iam:UpdateAssumeRolePolicy",
+                  "iam:UpdateRole"
+                ],
+                "condition": [],
+                "effect": "Allow",
+                "not_actions": [],
+                "not_principals": [],
+                "not_resources": [],
+                "principals": [],
+                "resources": [
+                  "arn:aws:iam::416162027738:policy/*lambda*",
+                  "arn:aws:iam::416162027738:policy/url-*",
+                  "arn:aws:iam::416162027738:role/*lambda*",
+                  "arn:aws:iam::416162027738:role/url-*"
+                ],
+                "sid": "IamForLambdaExec"
+              }
+            ],
+            "version": "2012-10-17"
+          },
+          "sensitive_attributes": []
+        }
+      ]
+    },
+    {
+      "mode": "data",
+      "type": "aws_iam_policy_document",
+      "name": "gha_apply_backend",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "id": "3023394680",
+            "json": "{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Sid\": \"S3BucketMetaReads\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"s3:ListBucket\",\n        \"s3:Get*\"\n      ],\n      \"Resource\": \"arn:aws:s3:::urlshortenerlarriephill\"\n    },\n    {\n      \"Sid\": \"S3StateRw\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"s3:PutObject\",\n        \"s3:GetObject\",\n        \"s3:DeleteObject\"\n      ],\n      \"Resource\": \"arn:aws:s3:::urlshortenerlarriephill/*\"\n    },\n    {\n      \"Sid\": \"DDBStateLock\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"dynamodb:PutItem\",\n        \"dynamodb:ListTagsOfResource\",\n        \"dynamodb:GetItem\",\n        \"dynamodb:DescribeTable\",\n        \"dynamodb:DescribeContinuousBackups\",\n        \"dynamodb:DeleteItem\"\n      ],\n      \"Resource\": \"arn:aws:dynamodb:eu-west-2:416162027738:table/tf-lock-dev\"\n    }\n  ]\n}",
+            "minified_json": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Sid\":\"S3BucketMetaReads\",\"Effect\":\"Allow\",\"Action\":[\"s3:ListBucket\",\"s3:Get*\"],\"Resource\":\"arn:aws:s3:::urlshortenerlarriephill\"},{\"Sid\":\"S3StateRw\",\"Effect\":\"Allow\",\"Action\":[\"s3:PutObject\",\"s3:GetObject\",\"s3:DeleteObject\"],\"Resource\":\"arn:aws:s3:::urlshortenerlarriephill/*\"},{\"Sid\":\"DDBStateLock\",\"Effect\":\"Allow\",\"Action\":[\"dynamodb:PutItem\",\"dynamodb:ListTagsOfResource\",\"dynamodb:GetItem\",\"dynamodb:DescribeTable\",\"dynamodb:DescribeContinuousBackups\",\"dynamodb:DeleteItem\"],\"Resource\":\"arn:aws:dynamodb:eu-west-2:416162027738:table/tf-lock-dev\"}]}",
+            "override_json": null,
+            "override_policy_documents": null,
+            "policy_id": null,
+            "source_json": null,
+            "source_policy_documents": null,
+            "statement": [
+              {
+                "actions": [
+                  "s3:Get*",
+                  "s3:ListBucket"
+                ],
+                "condition": [],
+                "effect": "Allow",
+                "not_actions": [],
+                "not_principals": [],
+                "not_resources": [],
+                "principals": [],
+                "resources": [
+                  "arn:aws:s3:::urlshortenerlarriephill"
+                ],
+                "sid": "S3BucketMetaReads"
+              },
+              {
+                "actions": [
+                  "s3:DeleteObject",
+                  "s3:GetObject",
+                  "s3:PutObject"
+                ],
+                "condition": [],
+                "effect": "Allow",
+                "not_actions": [],
+                "not_principals": [],
+                "not_resources": [],
+                "principals": [],
+                "resources": [
+                  "arn:aws:s3:::urlshortenerlarriephill/*"
+                ],
+                "sid": "S3StateRw"
+              },
+              {
+                "actions": [
+                  "dynamodb:DeleteItem",
+                  "dynamodb:DescribeContinuousBackups",
+                  "dynamodb:DescribeTable",
+                  "dynamodb:GetItem",
+                  "dynamodb:ListTagsOfResource",
+                  "dynamodb:PutItem"
+                ],
+                "condition": [],
+                "effect": "Allow",
+                "not_actions": [],
+                "not_principals": [],
+                "not_resources": [],
+                "principals": [],
+                "resources": [
+                  "arn:aws:dynamodb:eu-west-2:416162027738:table/tf-lock-dev"
+                ],
+                "sid": "DDBStateLock"
+              }
+            ],
+            "version": "2012-10-17"
+          },
+          "sensitive_attributes": []
+        }
+      ]
+    },
+    {
+      "mode": "data",
+      "type": "aws_iam_policy_document",
+      "name": "gha_apply_iam_read",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "id": "1488926430",
+            "json": "{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Sid\": \"IamReadOnly\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"iam:List*\",\n        \"iam:Get*\"\n      ],\n      \"Resource\": \"*\"\n    }\n  ]\n}",
+            "minified_json": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Sid\":\"IamReadOnly\",\"Effect\":\"Allow\",\"Action\":[\"iam:List*\",\"iam:Get*\"],\"Resource\":\"*\"}]}",
+            "override_json": null,
+            "override_policy_documents": null,
+            "policy_id": null,
+            "source_json": null,
+            "source_policy_documents": null,
+            "statement": [
+              {
+                "actions": [
+                  "iam:Get*",
+                  "iam:List*"
+                ],
+                "condition": [],
+                "effect": "Allow",
+                "not_actions": [],
+                "not_principals": [],
+                "not_resources": [],
+                "principals": [],
+                "resources": [
+                  "*"
+                ],
+                "sid": "IamReadOnly"
+              }
+            ],
+            "version": "2012-10-17"
+          },
+          "sensitive_attributes": []
+        }
+      ]
+    },
+    {
+      "mode": "data",
+      "type": "aws_iam_policy_document",
+      "name": "gha_apply_manage_url_policies",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "id": "3716327890",
+            "json": "{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Sid\": \"ManageUrlPolicies\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"iam:SetDefaultPolicyVersion\",\n        \"iam:ListPolicyVersions\",\n        \"iam:GetPolicy\",\n        \"iam:DeletePolicyVersion\",\n        \"iam:DeletePolicy\",\n        \"iam:CreatePolicyVersion\",\n        \"iam:CreatePolicy\"\n      ],\n      \"Resource\": [\n        \"arn:aws:iam::416162027738:policy/url_*\",\n        \"arn:aws:iam::416162027738:policy/url-*\"\n      ]\n    }\n  ]\n}",
+            "minified_json": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Sid\":\"ManageUrlPolicies\",\"Effect\":\"Allow\",\"Action\":[\"iam:SetDefaultPolicyVersion\",\"iam:ListPolicyVersions\",\"iam:GetPolicy\",\"iam:DeletePolicyVersion\",\"iam:DeletePolicy\",\"iam:CreatePolicyVersion\",\"iam:CreatePolicy\"],\"Resource\":[\"arn:aws:iam::416162027738:policy/url_*\",\"arn:aws:iam::416162027738:policy/url-*\"]}]}",
+            "override_json": null,
+            "override_policy_documents": null,
+            "policy_id": null,
+            "source_json": null,
+            "source_policy_documents": null,
+            "statement": [
+              {
+                "actions": [
+                  "iam:CreatePolicy",
+                  "iam:CreatePolicyVersion",
+                  "iam:DeletePolicy",
+                  "iam:DeletePolicyVersion",
+                  "iam:GetPolicy",
+                  "iam:ListPolicyVersions",
+                  "iam:SetDefaultPolicyVersion"
+                ],
+                "condition": [],
+                "effect": "Allow",
+                "not_actions": [],
+                "not_principals": [],
+                "not_resources": [],
+                "principals": [],
+                "resources": [
+                  "arn:aws:iam::416162027738:policy/url-*",
+                  "arn:aws:iam::416162027738:policy/url_*"
+                ],
+                "sid": "ManageUrlPolicies"
+              }
+            ],
+            "version": "2012-10-17"
+          },
+          "sensitive_attributes": []
+        }
+      ]
+    },
+    {
+      "mode": "data",
+      "type": "aws_iam_policy_document",
+      "name": "gha_apply_self_desc",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "id": "2185140176",
+            "json": "{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Sid\": \"UpdateOwnDescription\",\n      \"Effect\": \"Allow\",\n      \"Action\": \"iam:UpdateRoleDescription\",\n      \"Resource\": \"arn:aws:iam::416162027738:role/url-dev-gha-apply\"\n    }\n  ]\n}",
+            "minified_json": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Sid\":\"UpdateOwnDescription\",\"Effect\":\"Allow\",\"Action\":\"iam:UpdateRoleDescription\",\"Resource\":\"arn:aws:iam::416162027738:role/url-dev-gha-apply\"}]}",
+            "override_json": null,
+            "override_policy_documents": null,
+            "policy_id": null,
+            "source_json": null,
+            "source_policy_documents": null,
+            "statement": [
+              {
+                "actions": [
+                  "iam:UpdateRoleDescription"
+                ],
+                "condition": [],
+                "effect": "Allow",
+                "not_actions": [],
+                "not_principals": [],
+                "not_resources": [],
+                "principals": [],
+                "resources": [
+                  "arn:aws:iam::416162027738:role/url-dev-gha-apply"
+                ],
+                "sid": "UpdateOwnDescription"
+              }
+            ],
+            "version": "2012-10-17"
+          },
+          "sensitive_attributes": []
+        }
+      ]
+    },
+    {
+      "mode": "data",
+      "type": "aws_iam_policy_document",
+      "name": "gha_oidc_trust",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "id": "3834368477",
+            "json": "{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Effect\": \"Allow\",\n      \"Action\": \"sts:AssumeRoleWithWebIdentity\",\n      \"Principal\": {\n        \"Federated\": \"arn:aws:iam::416162027738:oidc-provider/token.actions.githubusercontent.com\"\n      },\n      \"Condition\": {\n        \"StringEquals\": {\n          \"token.actions.githubusercontent.com:aud\": \"sts.amazonaws.com\"\n        },\n        \"StringLike\": {\n          \"token.actions.githubusercontent.com:sub\": [\n            \"repo:larriephill/url-shortener:ref:refs/heads/dev\",\n            \"repo:Larriephill/url-shortener:ref:refs/heads/dev\",\n            \"repo:larriephill/url-shortener:pull_request\",\n            \"repo:Larriephill/url-shortener:pull_request\"\n          ]\n        }\n      }\n    }\n  ]\n}",
+            "minified_json": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Action\":\"sts:AssumeRoleWithWebIdentity\",\"Principal\":{\"Federated\":\"arn:aws:iam::416162027738:oidc-provider/token.actions.githubusercontent.com\"},\"Condition\":{\"StringEquals\":{\"token.actions.githubusercontent.com:aud\":\"sts.amazonaws.com\"},\"StringLike\":{\"token.actions.githubusercontent.com:sub\":[\"repo:larriephill/url-shortener:ref:refs/heads/dev\",\"repo:Larriephill/url-shortener:ref:refs/heads/dev\",\"repo:larriephill/url-shortener:pull_request\",\"repo:Larriephill/url-shortener:pull_request\"]}}}]}",
+            "override_json": null,
+            "override_policy_documents": null,
+            "policy_id": null,
+            "source_json": null,
+            "source_policy_documents": null,
+            "statement": [
+              {
+                "actions": [
+                  "sts:AssumeRoleWithWebIdentity"
+                ],
+                "condition": [
+                  {
+                    "test": "StringEquals",
+                    "values": [
+                      "sts.amazonaws.com"
+                    ],
+                    "variable": "token.actions.githubusercontent.com:aud"
+                  },
+                  {
+                    "test": "StringLike",
+                    "values": [
+                      "repo:larriephill/url-shortener:ref:refs/heads/dev",
+                      "repo:Larriephill/url-shortener:ref:refs/heads/dev",
+                      "repo:larriephill/url-shortener:pull_request",
+                      "repo:Larriephill/url-shortener:pull_request"
+                    ],
+                    "variable": "token.actions.githubusercontent.com:sub"
+                  }
+                ],
+                "effect": "Allow",
+                "not_actions": [],
+                "not_principals": [],
+                "not_resources": [],
+                "principals": [
+                  {
+                    "identifiers": [
+                      "arn:aws:iam::416162027738:oidc-provider/token.actions.githubusercontent.com"
+                    ],
+                    "type": "Federated"
+                  }
+                ],
+                "resources": [],
+                "sid": ""
+              }
+            ],
+            "version": "2012-10-17"
+          },
+          "sensitive_attributes": []
+        }
+      ]
+    },
+    {
+      "mode": "data",
+      "type": "aws_iam_policy_document",
+      "name": "gha_oidc_trust_apply",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "id": "2777780703",
+            "json": "{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Effect\": \"Allow\",\n      \"Action\": \"sts:AssumeRoleWithWebIdentity\",\n      \"Principal\": {\n        \"Federated\": \"arn:aws:iam::416162027738:oidc-provider/token.actions.githubusercontent.com\"\n      },\n      \"Condition\": {\n        \"StringEquals\": {\n          \"token.actions.githubusercontent.com:aud\": \"sts.amazonaws.com\",\n          \"token.actions.githubusercontent.com:sub\": [\n            \"repo:larriephill/url-shortener:environment:dev\",\n            \"repo:Larriephill/url-shortener:environment:dev\"\n          ]\n        }\n      }\n    }\n  ]\n}",
+            "minified_json": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Action\":\"sts:AssumeRoleWithWebIdentity\",\"Principal\":{\"Federated\":\"arn:aws:iam::416162027738:oidc-provider/token.actions.githubusercontent.com\"},\"Condition\":{\"StringEquals\":{\"token.actions.githubusercontent.com:aud\":\"sts.amazonaws.com\",\"token.actions.githubusercontent.com:sub\":[\"repo:larriephill/url-shortener:environment:dev\",\"repo:Larriephill/url-shortener:environment:dev\"]}}}]}",
+            "override_json": null,
+            "override_policy_documents": null,
+            "policy_id": null,
+            "source_json": null,
+            "source_policy_documents": null,
+            "statement": [
+              {
+                "actions": [
+                  "sts:AssumeRoleWithWebIdentity"
+                ],
+                "condition": [
+                  {
+                    "test": "StringEquals",
+                    "values": [
+                      "repo:larriephill/url-shortener:environment:dev",
+                      "repo:Larriephill/url-shortener:environment:dev"
+                    ],
+                    "variable": "token.actions.githubusercontent.com:sub"
+                  },
+                  {
+                    "test": "StringEquals",
+                    "values": [
+                      "sts.amazonaws.com"
+                    ],
+                    "variable": "token.actions.githubusercontent.com:aud"
+                  }
+                ],
+                "effect": "Allow",
+                "not_actions": [],
+                "not_principals": [],
+                "not_resources": [],
+                "principals": [
+                  {
+                    "identifiers": [
+                      "arn:aws:iam::416162027738:oidc-provider/token.actions.githubusercontent.com"
+                    ],
+                    "type": "Federated"
+                  }
+                ],
+                "resources": [],
+                "sid": ""
+              }
+            ],
+            "version": "2012-10-17"
+          },
+          "sensitive_attributes": []
+        }
+      ]
+    },
+    {
+      "mode": "data",
+      "type": "aws_iam_policy_document",
+      "name": "gha_plan_backend",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "id": "271802992",
+            "json": "{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Sid\": \"ApiGatewayV2Read\",\n      \"Effect\": \"Allow\",\n      \"Action\": \"apigateway:GET\",\n      \"Resource\": \"arn:aws:apigateway:eu-west-2::/apis*\"\n    },\n    {\n      \"Sid\": \"CloudWatchLogsDescribe\",\n      \"Effect\": \"Allow\",\n      \"Action\": \"logs:DescribeLogGroups\",\n      \"Resource\": \"*\"\n    },\n    {\n      \"Sid\": \"IamRead\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"iam:ListPolicyVersions\",\n        \"iam:GetRole\",\n        \"iam:GetPolicy\",\n        \"iam:GetOpenIDConnectProvider\"\n      ],\n      \"Resource\": [\n        \"arn:aws:iam::416162027738:role/url-*\",\n        \"arn:aws:iam::416162027738:policy/url-*\",\n        \"arn:aws:iam::416162027738:oidc-provider/token.actions.githubusercontent.com\"\n      ]\n    },\n    {\n      \"Sid\": \"DynamoDbDescribe\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"dynamodb:DescribeTable\",\n        \"dynamodb:DescribeContinuousBackups\"\n      ],\n      \"Resource\": \"arn:aws:dynamodb:eu-west-2:416162027738:table/*\"\n    },\n    {\n      \"Sid\": \"S3BackendRead\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"s3:ListBucket\",\n        \"s3:GetPublicAccessBlock\",\n        \"s3:GetEncryptionConfiguration\",\n        \"s3:GetBucketVersioning\",\n        \"s3:GetBucketTagging\",\n        \"s3:GetBucketPolicy\",\n        \"s3:GetBucketLocation\"\n      ],\n      \"Resource\": \"arn:aws:s3:::urlshortenerlarriephill\"\n    },\n    {\n      \"Sid\": \"DynamoDbLockWrite\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"dynamodb:UpdateItem\",\n        \"dynamodb:PutItem\",\n        \"dynamodb:GetItem\",\n        \"dynamodb:DeleteItem\"\n      ],\n      \"Resource\": \"arn:aws:dynamodb:eu-west-2:416162027738:table/tf-lock-dev\"\n    },\n    {\n      \"Sid\": \"S3BackendObjectsRead\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"s3:ListBucketMultipartUploads\",\n        \"s3:GetObject\"\n      ],\n      \"Resource\": \"arn:aws:s3:::urlshortenerlarriephill/*\"\n    }\n  ]\n}",
+            "minified_json": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Sid\":\"ApiGatewayV2Read\",\"Effect\":\"Allow\",\"Action\":\"apigateway:GET\",\"Resource\":\"arn:aws:apigateway:eu-west-2::/apis*\"},{\"Sid\":\"CloudWatchLogsDescribe\",\"Effect\":\"Allow\",\"Action\":\"logs:DescribeLogGroups\",\"Resource\":\"*\"},{\"Sid\":\"IamRead\",\"Effect\":\"Allow\",\"Action\":[\"iam:ListPolicyVersions\",\"iam:GetRole\",\"iam:GetPolicy\",\"iam:GetOpenIDConnectProvider\"],\"Resource\":[\"arn:aws:iam::416162027738:role/url-*\",\"arn:aws:iam::416162027738:policy/url-*\",\"arn:aws:iam::416162027738:oidc-provider/token.actions.githubusercontent.com\"]},{\"Sid\":\"DynamoDbDescribe\",\"Effect\":\"Allow\",\"Action\":[\"dynamodb:DescribeTable\",\"dynamodb:DescribeContinuousBackups\"],\"Resource\":\"arn:aws:dynamodb:eu-west-2:416162027738:table/*\"},{\"Sid\":\"S3BackendRead\",\"Effect\":\"Allow\",\"Action\":[\"s3:ListBucket\",\"s3:GetPublicAccessBlock\",\"s3:GetEncryptionConfiguration\",\"s3:GetBucketVersioning\",\"s3:GetBucketTagging\",\"s3:GetBucketPolicy\",\"s3:GetBucketLocation\"],\"Resource\":\"arn:aws:s3:::urlshortenerlarriephill\"},{\"Sid\":\"DynamoDbLockWrite\",\"Effect\":\"Allow\",\"Action\":[\"dynamodb:UpdateItem\",\"dynamodb:PutItem\",\"dynamodb:GetItem\",\"dynamodb:DeleteItem\"],\"Resource\":\"arn:aws:dynamodb:eu-west-2:416162027738:table/tf-lock-dev\"},{\"Sid\":\"S3BackendObjectsRead\",\"Effect\":\"Allow\",\"Action\":[\"s3:ListBucketMultipartUploads\",\"s3:GetObject\"],\"Resource\":\"arn:aws:s3:::urlshortenerlarriephill/*\"}]}",
+            "override_json": null,
+            "override_policy_documents": null,
+            "policy_id": null,
+            "source_json": null,
+            "source_policy_documents": null,
+            "statement": [
+              {
+                "actions": [
+                  "apigateway:GET"
+                ],
+                "condition": [],
+                "effect": "Allow",
+                "not_actions": [],
+                "not_principals": [],
+                "not_resources": [],
+                "principals": [],
+                "resources": [
+                  "arn:aws:apigateway:eu-west-2::/apis*"
+                ],
+                "sid": "ApiGatewayV2Read"
+              },
+              {
+                "actions": [
+                  "logs:DescribeLogGroups"
+                ],
+                "condition": [],
+                "effect": "Allow",
+                "not_actions": [],
+                "not_principals": [],
+                "not_resources": [],
+                "principals": [],
+                "resources": [
+                  "*"
+                ],
+                "sid": "CloudWatchLogsDescribe"
+              },
+              {
+                "actions": [
+                  "iam:GetOpenIDConnectProvider",
+                  "iam:GetPolicy",
+                  "iam:GetRole",
+                  "iam:ListPolicyVersions"
+                ],
+                "condition": [],
+                "effect": "Allow",
+                "not_actions": [],
+                "not_principals": [],
+                "not_resources": [],
+                "principals": [],
+                "resources": [
+                  "arn:aws:iam::416162027738:oidc-provider/token.actions.githubusercontent.com",
+                  "arn:aws:iam::416162027738:policy/url-*",
+                  "arn:aws:iam::416162027738:role/url-*"
+                ],
+                "sid": "IamRead"
+              },
+              {
+                "actions": [
+                  "dynamodb:DescribeContinuousBackups",
+                  "dynamodb:DescribeTable"
+                ],
+                "condition": [],
+                "effect": "Allow",
+                "not_actions": [],
+                "not_principals": [],
+                "not_resources": [],
+                "principals": [],
+                "resources": [
+                  "arn:aws:dynamodb:eu-west-2:416162027738:table/*"
+                ],
+                "sid": "DynamoDbDescribe"
+              },
+              {
+                "actions": [
+                  "s3:GetBucketLocation",
+                  "s3:GetBucketPolicy",
+                  "s3:GetBucketTagging",
+                  "s3:GetBucketVersioning",
+                  "s3:GetEncryptionConfiguration",
+                  "s3:GetPublicAccessBlock",
+                  "s3:ListBucket"
+                ],
+                "condition": [],
+                "effect": "Allow",
+                "not_actions": [],
+                "not_principals": [],
+                "not_resources": [],
+                "principals": [],
+                "resources": [
+                  "arn:aws:s3:::urlshortenerlarriephill"
+                ],
+                "sid": "S3BackendRead"
+              },
+              {
+                "actions": [
+                  "dynamodb:DeleteItem",
+                  "dynamodb:GetItem",
+                  "dynamodb:PutItem",
+                  "dynamodb:UpdateItem"
+                ],
+                "condition": [],
+                "effect": "Allow",
+                "not_actions": [],
+                "not_principals": [],
+                "not_resources": [],
+                "principals": [],
+                "resources": [
+                  "arn:aws:dynamodb:eu-west-2:416162027738:table/tf-lock-dev"
+                ],
+                "sid": "DynamoDbLockWrite"
+              },
+              {
+                "actions": [
+                  "s3:GetObject",
+                  "s3:ListBucketMultipartUploads"
+                ],
+                "condition": [],
+                "effect": "Allow",
+                "not_actions": [],
+                "not_principals": [],
+                "not_resources": [],
+                "principals": [],
+                "resources": [
+                  "arn:aws:s3:::urlshortenerlarriephill/*"
+                ],
+                "sid": "S3BackendObjectsRead"
+              }
+            ],
+            "version": "2012-10-17"
+          },
+          "sensitive_attributes": []
+        }
+      ]
+    },
+    {
+      "mode": "data",
+      "type": "aws_iam_policy_document",
+      "name": "lambda_dynamodb",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "id": "3757031449",
+            "json": "{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"dynamodb:PutItem\",\n        \"dynamodb:GetItem\"\n      ],\n      \"Resource\": \"arn:aws:dynamodb:eu-west-2:416162027738:table/urls_dev\"\n    }\n  ]\n}",
+            "minified_json": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Action\":[\"dynamodb:PutItem\",\"dynamodb:GetItem\"],\"Resource\":\"arn:aws:dynamodb:eu-west-2:416162027738:table/urls_dev\"}]}",
+            "override_json": null,
+            "override_policy_documents": null,
+            "policy_id": null,
+            "source_json": null,
+            "source_policy_documents": null,
+            "statement": [
+              {
+                "actions": [
+                  "dynamodb:GetItem",
+                  "dynamodb:PutItem"
+                ],
+                "condition": [],
+                "effect": "Allow",
+                "not_actions": [],
+                "not_principals": [],
+                "not_resources": [],
+                "principals": [],
+                "resources": [
+                  "arn:aws:dynamodb:eu-west-2:416162027738:table/urls_dev"
+                ],
+                "sid": ""
+              }
+            ],
+            "version": "2012-10-17"
+          },
+          "sensitive_attributes": []
+        }
+      ]
+    },
+    {
+      "mode": "data",
+      "type": "aws_iam_policy_document",
+      "name": "lambda_logs",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "id": "2571638127",
+            "json": "{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"logs:PutLogEvents\",\n        \"logs:CreateLogStream\",\n        \"logs:CreateLogGroup\"\n      ],\n      \"Resource\": \"arn:aws:logs:eu-west-2:416162027738:*\"\n    }\n  ]\n}",
+            "minified_json": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Action\":[\"logs:PutLogEvents\",\"logs:CreateLogStream\",\"logs:CreateLogGroup\"],\"Resource\":\"arn:aws:logs:eu-west-2:416162027738:*\"}]}",
+            "override_json": null,
+            "override_policy_documents": null,
+            "policy_id": null,
+            "source_json": null,
+            "source_policy_documents": null,
+            "statement": [
+              {
+                "actions": [
+                  "logs:CreateLogGroup",
+                  "logs:CreateLogStream",
+                  "logs:PutLogEvents"
+                ],
+                "condition": [],
+                "effect": "Allow",
+                "not_actions": [],
+                "not_principals": [],
+                "not_resources": [],
+                "principals": [],
+                "resources": [
+                  "arn:aws:logs:eu-west-2:416162027738:*"
+                ],
+                "sid": ""
+              }
+            ],
+            "version": "2012-10-17"
+          },
+          "sensitive_attributes": []
+        }
+      ]
+    },
+    {
+      "mode": "data",
+      "type": "aws_iam_policy_document",
+      "name": "lambda_metrics",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "id": "422014519",
+            "json": "{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Sid\": \"PutCustomMetrics\",\n      \"Effect\": \"Allow\",\n      \"Action\": \"cloudwatch:PutMetricData\",\n      \"Resource\": \"*\",\n      \"Condition\": {\n        \"StringEquals\": {\n          \"cloudwatch:namespace\": \"UrlShortener\"\n        }\n      }\n    }\n  ]\n}",
+            "minified_json": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Sid\":\"PutCustomMetrics\",\"Effect\":\"Allow\",\"Action\":\"cloudwatch:PutMetricData\",\"Resource\":\"*\",\"Condition\":{\"StringEquals\":{\"cloudwatch:namespace\":\"UrlShortener\"}}}]}",
+            "override_json": null,
+            "override_policy_documents": null,
+            "policy_id": null,
+            "source_json": null,
+            "source_policy_documents": null,
+            "statement": [
+              {
+                "actions": [
+                  "cloudwatch:PutMetricData"
+                ],
+                "condition": [
+                  {
+                    "test": "StringEquals",
+                    "values": [
+                      "UrlShortener"
+                    ],
+                    "variable": "cloudwatch:namespace"
+                  }
+                ],
+                "effect": "Allow",
+                "not_actions": [],
+                "not_principals": [],
+                "not_resources": [],
+                "principals": [],
+                "resources": [
+                  "*"
+                ],
+                "sid": "PutCustomMetrics"
+              }
+            ],
+            "version": "2012-10-17"
+          },
+          "sensitive_attributes": []
+        }
+      ]
+    },
+    {
+      "mode": "data",
+      "type": "aws_iam_policy_document",
+      "name": "lambda_trust",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "id": "2690255455",
+            "json": "{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Effect\": \"Allow\",\n      \"Action\": \"sts:AssumeRole\",\n      \"Principal\": {\n        \"Service\": \"lambda.amazonaws.com\"\n      }\n    }\n  ]\n}",
+            "minified_json": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Action\":\"sts:AssumeRole\",\"Principal\":{\"Service\":\"lambda.amazonaws.com\"}}]}",
+            "override_json": null,
+            "override_policy_documents": null,
+            "policy_id": null,
+            "source_json": null,
+            "source_policy_documents": null,
+            "statement": [
+              {
+                "actions": [
+                  "sts:AssumeRole"
+                ],
+                "condition": [],
+                "effect": "Allow",
+                "not_actions": [],
+                "not_principals": [],
+                "not_resources": [],
+                "principals": [
+                  {
+                    "identifiers": [
+                      "lambda.amazonaws.com"
+                    ],
+                    "type": "Service"
+                  }
+                ],
+                "resources": [],
+                "sid": ""
+              }
+            ],
+            "version": "2012-10-17"
+          },
+          "sensitive_attributes": []
+        }
+      ]
+    },
+    {
+      "mode": "data",
+      "type": "aws_partition",
+      "name": "current",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "dns_suffix": "amazonaws.com",
+            "id": "aws",
+            "partition": "aws",
+            "reverse_dns_prefix": "com.amazonaws"
+          },
+          "sensitive_attributes": []
+        }
+      ]
+    },
+    {
+      "mode": "data",
+      "type": "aws_region",
+      "name": "current",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "description": "Europe (London)",
+            "endpoint": "ec2.eu-west-2.amazonaws.com",
+            "id": "eu-west-2",
+            "name": "eu-west-2"
+          },
+          "sensitive_attributes": []
+        }
+      ]
+    },
+    {
+      "mode": "data",
+      "type": "aws_route53_zone",
+      "name": "root",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "arn": "arn:aws:route53:::hostedzone/Z06481721PFMTPJRW6Z9N",
+            "caller_reference": "RISWorkflow-RD:51f0b701-fa39-42ef-833d-ca19b859e4d1",
+            "comment": "HostedZone created by Route53 Registrar",
+            "id": "Z06481721PFMTPJRW6Z9N",
+            "linked_service_description": null,
+            "linked_service_principal": null,
+            "name": "regalhorizon.click",
+            "name_servers": [
+              "ns-162.awsdns-20.com",
+              "ns-1324.awsdns-37.org",
+              "ns-850.awsdns-42.net",
+              "ns-1781.awsdns-30.co.uk"
+            ],
+            "primary_name_server": "ns-162.awsdns-20.com",
+            "private_zone": false,
+            "resource_record_set_count": 5,
+            "tags": {},
+            "vpc_id": null,
+            "zone_id": "Z06481721PFMTPJRW6Z9N"
+          },
+          "sensitive_attributes": []
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_acm_certificate",
+      "name": "api",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "arn": "arn:aws:acm:eu-west-2:416162027738:certificate/d6f7630d-0633-4391-85a0-259101c0be5d",
+            "certificate_authority_arn": "",
+            "certificate_body": null,
+            "certificate_chain": null,
+            "domain_name": "api.regalhorizon.click",
+            "domain_validation_options": [
+              {
+                "domain_name": "api.regalhorizon.click",
+                "resource_record_name": "_c4eb2e26dc3a484304bad340b6f49ca8.api.regalhorizon.click.",
+                "resource_record_type": "CNAME",
+                "resource_record_value": "_71bdfff00af0f005fd4de882d4cb0d61.xlfgrmvvlj.acm-validations.aws."
+              }
+            ],
+            "early_renewal_duration": "",
+            "id": "arn:aws:acm:eu-west-2:416162027738:certificate/d6f7630d-0633-4391-85a0-259101c0be5d",
+            "key_algorithm": "RSA_2048",
+            "not_after": "2026-09-30T23:59:59Z",
+            "not_before": "2025-09-01T00:00:00Z",
+            "options": [
+              {
+                "certificate_transparency_logging_preference": "ENABLED"
+              }
+            ],
+            "pending_renewal": false,
+            "private_key": null,
+            "renewal_eligibility": "ELIGIBLE",
+            "renewal_summary": [],
+            "status": "ISSUED",
+            "subject_alternative_names": [
+              "api.regalhorizon.click"
+            ],
+            "tags": {},
+            "tags_all": {},
+            "type": "AMAZON_ISSUED",
+            "validation_emails": [],
+            "validation_method": "DNS",
+            "validation_option": []
+          },
+          "sensitive_attributes": [
+            [
+              {
+                "type": "get_attr",
+                "value": "private_key"
+              }
+            ]
+          ],
+          "private": "bnVsbA=="
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_acm_certificate",
+      "name": "cf",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"].us_east_1",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "arn": "arn:aws:acm:us-east-1:416162027738:certificate/83fa4f34-e172-4cf0-bda8-13579fcc13f6",
+            "certificate_authority_arn": "",
+            "certificate_body": null,
+            "certificate_chain": null,
+            "domain_name": "api.regalhorizon.click",
+            "domain_validation_options": [
+              {
+                "domain_name": "api.regalhorizon.click",
+                "resource_record_name": "_c4eb2e26dc3a484304bad340b6f49ca8.api.regalhorizon.click.",
+                "resource_record_type": "CNAME",
+                "resource_record_value": "_71bdfff00af0f005fd4de882d4cb0d61.xlfgrmvvlj.acm-validations.aws."
+              }
+            ],
+            "early_renewal_duration": "",
+            "id": "arn:aws:acm:us-east-1:416162027738:certificate/83fa4f34-e172-4cf0-bda8-13579fcc13f6",
+            "key_algorithm": "RSA_2048",
+            "not_after": "2026-10-04T23:59:59Z",
+            "not_before": "2025-09-05T00:00:00Z",
+            "options": [
+              {
+                "certificate_transparency_logging_preference": "ENABLED"
+              }
+            ],
+            "pending_renewal": false,
+            "private_key": null,
+            "renewal_eligibility": "ELIGIBLE",
+            "renewal_summary": [],
+            "status": "ISSUED",
+            "subject_alternative_names": [
+              "api.regalhorizon.click"
+            ],
+            "tags": {
+              "Project": "url-shortener",
+              "Stage": "dev"
+            },
+            "tags_all": {
+              "Project": "url-shortener",
+              "Stage": "dev"
+            },
+            "type": "AMAZON_ISSUED",
+            "validation_emails": [],
+            "validation_method": "DNS",
+            "validation_option": []
+          },
+          "sensitive_attributes": [
+            [
+              {
+                "type": "get_attr",
+                "value": "private_key"
+              }
+            ]
+          ],
+          "private": "bnVsbA=="
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_acm_certificate_validation",
+      "name": "api",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "certificate_arn": "arn:aws:acm:eu-west-2:416162027738:certificate/d6f7630d-0633-4391-85a0-259101c0be5d",
+            "id": "2025-09-01 18:35:15.004 +0000 UTC",
+            "timeouts": null,
+            "validation_record_fqdns": [
+              "_c4eb2e26dc3a484304bad340b6f49ca8.api.regalhorizon.click"
+            ]
+          },
+          "sensitive_attributes": [],
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjo0NTAwMDAwMDAwMDAwfX0=",
+          "dependencies": [
+            "aws_acm_certificate.api",
+            "aws_route53_record.api_cert_validation",
+            "data.aws_route53_zone.root"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_acm_certificate_validation",
+      "name": "cf",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"].us_east_1",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "certificate_arn": "arn:aws:acm:us-east-1:416162027738:certificate/83fa4f34-e172-4cf0-bda8-13579fcc13f6",
+            "id": "2025-09-05 20:05:20.904 +0000 UTC",
+            "timeouts": null,
+            "validation_record_fqdns": [
+              "_c4eb2e26dc3a484304bad340b6f49ca8.api.regalhorizon.click"
+            ]
+          },
+          "sensitive_attributes": [],
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjo0NTAwMDAwMDAwMDAwfX0=",
+          "dependencies": [
+            "aws_acm_certificate.cf",
+            "aws_route53_record.cf_validation",
+            "data.aws_route53_zone.root"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_apigatewayv2_api",
+      "name": "http",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "api_endpoint": "https://764zo42j23.execute-api.eu-west-2.amazonaws.com",
+            "api_key_selection_expression": "$request.header.x-api-key",
+            "arn": "arn:aws:apigateway:eu-west-2::/apis/764zo42j23",
+            "body": null,
+            "cors_configuration": [
+              {
+                "allow_credentials": false,
+                "allow_headers": [
+                  "content-type"
+                ],
+                "allow_methods": [
+                  "GET",
+                  "OPTIONS",
+                  "POST"
+                ],
+                "allow_origins": [
+                  "*"
+                ],
+                "expose_headers": [],
+                "max_age": 3600
+              }
+            ],
+            "credentials_arn": null,
+            "description": "",
+            "disable_execute_api_endpoint": false,
+            "execution_arn": "arn:aws:execute-api:eu-west-2:416162027738:764zo42j23",
+            "fail_on_warnings": null,
+            "id": "764zo42j23",
+            "ip_address_type": "ipv4",
+            "name": "url-dev",
+            "protocol_type": "HTTP",
+            "route_key": null,
+            "route_selection_expression": "$request.method $request.path",
+            "tags": {
+              "Project": "url-shortener",
+              "Stage": "dev"
+            },
+            "tags_all": {
+              "Project": "url-shortener",
+              "Stage": "dev"
+            },
+            "target": null,
+            "version": ""
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA=="
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_apigatewayv2_api_mapping",
+      "name": "api",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "api_id": "764zo42j23",
+            "api_mapping_key": "",
+            "domain_name": "api.regalhorizon.click",
+            "id": "al5zc1",
+            "stage": "$default"
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA==",
+          "dependencies": [
+            "aws_acm_certificate.api",
+            "aws_acm_certificate_validation.api",
+            "aws_apigatewayv2_api.http",
+            "aws_apigatewayv2_domain_name.api",
+            "aws_route53_record.api_cert_validation",
+            "data.aws_route53_zone.root"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_apigatewayv2_domain_name",
+      "name": "api",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "api_mapping_selection_expression": "$request.basepath",
+            "arn": "arn:aws:apigateway:eu-west-2::/domainnames/api.regalhorizon.click",
+            "domain_name": "api.regalhorizon.click",
+            "domain_name_configuration": [
+              {
+                "certificate_arn": "arn:aws:acm:eu-west-2:416162027738:certificate/d6f7630d-0633-4391-85a0-259101c0be5d",
+                "endpoint_type": "REGIONAL",
+                "hosted_zone_id": "ZJ5UAJN8Y3Z2Q",
+                "ip_address_type": "ipv4",
+                "ownership_verification_certificate_arn": "",
+                "security_policy": "TLS_1_2",
+                "target_domain_name": "d-e50dn45tfi.execute-api.eu-west-2.amazonaws.com"
+              }
+            ],
+            "id": "api.regalhorizon.click",
+            "mutual_tls_authentication": [],
+            "tags": {},
+            "tags_all": {},
+            "timeouts": null
+          },
+          "sensitive_attributes": [],
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjo2MDAwMDAwMDAwMDAsInVwZGF0ZSI6MzYwMDAwMDAwMDAwMH19",
+          "dependencies": [
+            "aws_acm_certificate.api",
+            "aws_acm_certificate_validation.api",
+            "aws_route53_record.api_cert_validation",
+            "data.aws_route53_zone.root"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_apigatewayv2_integration",
+      "name": "lambda",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "api_id": "764zo42j23",
+            "connection_id": "",
+            "connection_type": "INTERNET",
+            "content_handling_strategy": "",
+            "credentials_arn": "",
+            "description": "",
+            "id": "xn0ohui",
+            "integration_method": "POST",
+            "integration_response_selection_expression": "",
+            "integration_subtype": "",
+            "integration_type": "AWS_PROXY",
+            "integration_uri": "arn:aws:apigateway:eu-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-2:416162027738:function:url-dev/invocations",
+            "passthrough_behavior": "",
+            "payload_format_version": "2.0",
+            "request_parameters": {},
+            "request_templates": {},
+            "response_parameters": [],
+            "template_selection_expression": "",
+            "timeout_milliseconds": 30000,
+            "tls_config": []
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA==",
+          "dependencies": [
+            "aws_apigatewayv2_api.http",
+            "aws_cloudwatch_log_group.lambda",
+            "aws_dynamodb_table.urls",
+            "aws_iam_role.lambda",
+            "aws_lambda_function.url",
+            "data.archive_file.lambda_zip",
+            "data.aws_iam_policy_document.lambda_trust"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_apigatewayv2_route",
+      "name": "get_code",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "api_id": "764zo42j23",
+            "api_key_required": false,
+            "authorization_scopes": [],
+            "authorization_type": "NONE",
+            "authorizer_id": "",
+            "id": "w0vq7zi",
+            "model_selection_expression": "",
+            "operation_name": "",
+            "request_models": {},
+            "request_parameter": [],
+            "route_key": "GET /{code}",
+            "route_response_selection_expression": "",
+            "target": "integrations/xn0ohui"
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA==",
+          "dependencies": [
+            "aws_apigatewayv2_api.http",
+            "aws_apigatewayv2_integration.lambda",
+            "aws_cloudwatch_log_group.lambda",
+            "aws_dynamodb_table.urls",
+            "aws_iam_role.lambda",
+            "aws_lambda_function.url",
+            "data.archive_file.lambda_zip",
+            "data.aws_iam_policy_document.lambda_trust"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_apigatewayv2_route",
+      "name": "post_root",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "api_id": "764zo42j23",
+            "api_key_required": false,
+            "authorization_scopes": [],
+            "authorization_type": "NONE",
+            "authorizer_id": "",
+            "id": "h57mdoa",
+            "model_selection_expression": "",
+            "operation_name": "",
+            "request_models": {},
+            "request_parameter": [],
+            "route_key": "POST /",
+            "route_response_selection_expression": "",
+            "target": "integrations/xn0ohui"
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA==",
+          "dependencies": [
+            "aws_apigatewayv2_api.http",
+            "aws_apigatewayv2_integration.lambda",
+            "aws_cloudwatch_log_group.lambda",
+            "aws_dynamodb_table.urls",
+            "aws_iam_role.lambda",
+            "aws_lambda_function.url",
+            "data.archive_file.lambda_zip",
+            "data.aws_iam_policy_document.lambda_trust"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_apigatewayv2_stage",
+      "name": "default",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "access_log_settings": [
+              {
+                "destination_arn": "arn:aws:logs:eu-west-2:416162027738:log-group:/aws/apigw/url-dev",
+                "format": "{\"httpMethod\":\"$context.httpMethod\",\"integrationError\":\"$context.integrationErrorMessage\",\"ip\":\"$context.identity.sourceIp\",\"path\":\"$context.path\",\"protocol\":\"$context.protocol\",\"requestId\":\"$context.requestId\",\"requestTime\":\"$context.requestTime\",\"responseLatency\":\"$context.responseLatency\",\"routeKey\":\"$context.routeKey\",\"status\":\"$context.status\",\"userAgent\":\"$context.identity.userAgent\"}"
+              }
+            ],
+            "api_id": "764zo42j23",
+            "arn": "arn:aws:apigateway:eu-west-2::/apis/764zo42j23/stages/$default",
+            "auto_deploy": true,
+            "client_certificate_id": "",
+            "default_route_settings": [
+              {
+                "data_trace_enabled": false,
+                "detailed_metrics_enabled": false,
+                "logging_level": "",
+                "throttling_burst_limit": 50,
+                "throttling_rate_limit": 25
+              }
+            ],
+            "deployment_id": "2btac3",
+            "description": "",
+            "execution_arn": "arn:aws:execute-api:eu-west-2:416162027738:764zo42j23/$default",
+            "id": "$default",
+            "invoke_url": "https://764zo42j23.execute-api.eu-west-2.amazonaws.com/",
+            "name": "$default",
+            "route_settings": [],
+            "stage_variables": {},
+            "tags": {
+              "Project": "url-shortener",
+              "Stage": "dev"
+            },
+            "tags_all": {
+              "Project": "url-shortener",
+              "Stage": "dev"
+            }
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA==",
+          "dependencies": [
+            "aws_apigatewayv2_api.http",
+            "aws_cloudwatch_log_group.api_gw"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_cloudfront_distribution",
+      "name": "api",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 1,
+          "attributes": {
+            "aliases": [
+              "api.regalhorizon.click"
+            ],
+            "arn": "arn:aws:cloudfront::416162027738:distribution/E1U48QDMP70HS4",
+            "caller_reference": "terraform-20250905201225864300000001",
+            "comment": null,
+            "continuous_deployment_policy_id": "",
+            "custom_error_response": [],
+            "default_cache_behavior": [
+              {
+                "allowed_methods": [
+                  "DELETE",
+                  "GET",
+                  "HEAD",
+                  "OPTIONS",
+                  "PATCH",
+                  "POST",
+                  "PUT"
+                ],
+                "cache_policy_id": "4135ea2d-6df8-44a3-9df3-4b5a84be39ad",
+                "cached_methods": [
+                  "GET",
+                  "HEAD",
+                  "OPTIONS"
+                ],
+                "compress": false,
+                "default_ttl": 0,
+                "field_level_encryption_id": "",
+                "forwarded_values": [],
+                "function_association": [],
+                "grpc_config": [
+                  {
+                    "enabled": false
+                  }
+                ],
+                "lambda_function_association": [],
+                "max_ttl": 0,
+                "min_ttl": 0,
+                "origin_request_policy_id": "216adef6-5c7f-47e4-b989-5492eafa07d3",
+                "realtime_log_config_arn": "",
+                "response_headers_policy_id": "",
+                "smooth_streaming": false,
+                "target_origin_id": "http-api",
+                "trusted_key_groups": [],
+                "trusted_signers": [],
+                "viewer_protocol_policy": "redirect-to-https"
+              }
+            ],
+            "default_root_object": "",
+            "domain_name": "d192wr7ygfjmxf.cloudfront.net",
+            "enabled": true,
+            "etag": "EVVUZNTEPFFDW",
+            "hosted_zone_id": "Z2FDTNDATAQYW2",
+            "http_version": "http2",
+            "id": "E1U48QDMP70HS4",
+            "in_progress_validation_batches": 0,
+            "is_ipv6_enabled": false,
+            "last_modified_time": "2025-09-05 20:12:27.023 +0000 UTC",
+            "logging_config": [],
+            "ordered_cache_behavior": [],
+            "origin": [
+              {
+                "connection_attempts": 3,
+                "connection_timeout": 10,
+                "custom_header": [],
+                "custom_origin_config": [
+                  {
+                    "http_port": 80,
+                    "https_port": 443,
+                    "origin_keepalive_timeout": 5,
+                    "origin_protocol_policy": "https-only",
+                    "origin_read_timeout": 30,
+                    "origin_ssl_protocols": [
+                      "TLSv1.2"
+                    ]
+                  }
+                ],
+                "domain_name": "764zo42j23.execute-api.eu-west-2.amazonaws.com",
+                "origin_access_control_id": "",
+                "origin_id": "http-api",
+                "origin_path": "",
+                "origin_shield": [],
+                "s3_origin_config": [],
+                "vpc_origin_config": []
+              }
+            ],
+            "origin_group": [],
+            "price_class": "PriceClass_100",
+            "restrictions": [
+              {
+                "geo_restriction": [
+                  {
+                    "locations": [],
+                    "restriction_type": "none"
+                  }
+                ]
+              }
+            ],
+            "retain_on_delete": false,
+            "staging": false,
+            "status": "Deployed",
+            "tags": {
+              "Project": "url-shortener",
+              "Stage": "dev"
+            },
+            "tags_all": {
+              "Project": "url-shortener",
+              "Stage": "dev"
+            },
+            "trusted_key_groups": [
+              {
+                "enabled": false,
+                "items": []
+              }
+            ],
+            "trusted_signers": [
+              {
+                "enabled": false,
+                "items": []
+              }
+            ],
+            "viewer_certificate": [
+              {
+                "acm_certificate_arn": "arn:aws:acm:us-east-1:416162027738:certificate/83fa4f34-e172-4cf0-bda8-13579fcc13f6",
+                "cloudfront_default_certificate": false,
+                "iam_certificate_id": "",
+                "minimum_protocol_version": "TLSv1.2_2021",
+                "ssl_support_method": "sni-only"
+              }
+            ],
+            "wait_for_deployment": true,
+            "web_acl_id": "arn:aws:wafv2:us-east-1:416162027738:global/webacl/url-shortener-dev-cf/65377b25-8503-4d0f-999e-e36edf0fa9d4"
+          },
+          "sensitive_attributes": [],
+          "private": "eyJzY2hlbWFfdmVyc2lvbiI6IjEifQ==",
+          "dependencies": [
+            "aws_acm_certificate.cf",
+            "aws_acm_certificate_validation.cf",
+            "aws_apigatewayv2_api.http",
+            "aws_route53_record.cf_validation",
+            "aws_wafv2_web_acl.cf",
+            "data.aws_cloudfront_cache_policy.disabled",
+            "data.aws_cloudfront_origin_request_policy.all_viewer",
+            "data.aws_route53_zone.root"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_cloudwatch_dashboard",
+      "name": "main",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "dashboard_arn": "arn:aws:cloudwatch::416162027738:dashboard/url-shortener-dev",
+            "dashboard_body": "{\"widgets\":[{\"height\":6,\"properties\":{\"metrics\":[[\"AWS/Lambda\",\"Invocations\",\"FunctionName\",\"url-dev\"],[\".\",\"Errors\",\".\",\".\"],[\".\",\"Throttles\",\".\",\".\"]],\"period\":300,\"region\":\"eu-west-2\",\"stacked\":false,\"stat\":\"Sum\",\"title\":\"Lambda — Invocations / Errors / Throttles\",\"view\":\"timeSeries\"},\"type\":\"metric\",\"width\":12,\"x\":0,\"y\":0},{\"height\":6,\"properties\":{\"metrics\":[[\"AWS/ApiGateway\",\"4xx\",\"ApiId\",\"764zo42j23\"],[\".\",\"5xx\",\".\",\".\"],[\".\",\"Latency\",\"ApiId\",\"764zo42j23\",{\"stat\":\"Average\"}]],\"period\":300,\"region\":\"eu-west-2\",\"stacked\":false,\"title\":\"API Gateway — 4xx / 5xx / Latency\",\"view\":\"timeSeries\"},\"type\":\"metric\",\"width\":12,\"x\":12,\"y\":0},{\"height\":6,\"properties\":{\"metrics\":[[\"UrlShortener\",\"RedirectCount\",\"Stage\",\"dev\"],[\".\",\"UrlCreatedCount\",\"Stage\",\"dev\"]],\"period\":300,\"region\":\"eu-west-2\",\"stacked\":false,\"stat\":\"Sum\",\"title\":\"Custom — Redirects / Creates\",\"view\":\"timeSeries\"},\"type\":\"metric\",\"width\":12,\"x\":0,\"y\":6},{\"height\":6,\"properties\":{\"query\":\"SOURCE '/aws/apigw/url-dev' | fields @timestamp, httpMethod, status, path, responseLatency, requestId | sort @timestamp desc | limit 50\",\"region\":\"eu-west-2\",\"title\":\"Recent API access logs\"},\"type\":\"log\",\"width\":12,\"x\":12,\"y\":6}]}",
+            "dashboard_name": "url-shortener-dev",
+            "id": "url-shortener-dev"
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA==",
+          "dependencies": [
+            "aws_apigatewayv2_api.http",
+            "aws_cloudwatch_log_group.api_gw",
+            "aws_cloudwatch_log_group.lambda",
+            "aws_dynamodb_table.urls",
+            "aws_iam_role.lambda",
+            "aws_lambda_function.url",
+            "data.archive_file.lambda_zip",
+            "data.aws_iam_policy_document.lambda_trust",
+            "data.aws_region.current"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_cloudwatch_log_group",
+      "name": "api_gw",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "arn": "arn:aws:logs:eu-west-2:416162027738:log-group:/aws/apigw/url-dev",
+            "id": "/aws/apigw/url-dev",
+            "kms_key_id": "",
+            "log_group_class": "STANDARD",
+            "name": "/aws/apigw/url-dev",
+            "name_prefix": "",
+            "retention_in_days": 14,
+            "skip_destroy": false,
+            "tags": {
+              "Project": "url-shortener",
+              "Stage": "dev"
+            },
+            "tags_all": {
+              "Project": "url-shortener",
+              "Stage": "dev"
+            }
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA==",
+          "dependencies": [
+            "aws_apigatewayv2_api.http"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_cloudwatch_log_group",
+      "name": "lambda",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "arn": "arn:aws:logs:eu-west-2:416162027738:log-group:/aws/lambda/url-dev",
+            "id": "/aws/lambda/url-dev",
+            "kms_key_id": "",
+            "log_group_class": "STANDARD",
+            "name": "/aws/lambda/url-dev",
+            "name_prefix": "",
+            "retention_in_days": 14,
+            "skip_destroy": false,
+            "tags": {
+              "Project": "url-shortener",
+              "Stage": "dev"
+            },
+            "tags_all": {
+              "Project": "url-shortener",
+              "Stage": "dev"
+            }
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA=="
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_cloudwatch_metric_alarm",
+      "name": "apigw_5xx",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 1,
+          "attributes": {
+            "actions_enabled": true,
+            "alarm_actions": [],
+            "alarm_description": "API Gateway returned 5XX \u003e= 1 in the last 5 minutes",
+            "alarm_name": "url-dev-apigw-5xx",
+            "arn": "arn:aws:cloudwatch:eu-west-2:416162027738:alarm:url-dev-apigw-5xx",
+            "comparison_operator": "GreaterThanOrEqualToThreshold",
+            "datapoints_to_alarm": 0,
+            "dimensions": {
+              "ApiId": "764zo42j23",
+              "Stage": "$default"
+            },
+            "evaluate_low_sample_count_percentiles": "",
+            "evaluation_periods": 1,
+            "extended_statistic": "",
+            "id": "url-dev-apigw-5xx",
+            "insufficient_data_actions": [],
+            "metric_name": "5XXError",
+            "metric_query": [],
+            "namespace": "AWS/ApiGateway",
+            "ok_actions": [],
+            "period": 300,
+            "statistic": "Sum",
+            "tags": {
+              "Project": "url-shortener",
+              "Stage": "dev"
+            },
+            "tags_all": {
+              "Project": "url-shortener",
+              "Stage": "dev"
+            },
+            "threshold": 1,
+            "threshold_metric_id": "",
+            "treat_missing_data": "notBreaching",
+            "unit": ""
+          },
+          "sensitive_attributes": [],
+          "private": "eyJzY2hlbWFfdmVyc2lvbiI6IjEifQ==",
+          "dependencies": [
+            "aws_apigatewayv2_api.http",
+            "aws_apigatewayv2_stage.default",
+            "aws_cloudwatch_log_group.api_gw"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_cloudwatch_metric_alarm",
+      "name": "lambda_errors",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 1,
+          "attributes": {
+            "actions_enabled": true,
+            "alarm_actions": [],
+            "alarm_description": "Lambda reported Errors \u003e= 1 in the last 5 minutes",
+            "alarm_name": "url-dev-lambda-errors",
+            "arn": "arn:aws:cloudwatch:eu-west-2:416162027738:alarm:url-dev-lambda-errors",
+            "comparison_operator": "GreaterThanOrEqualToThreshold",
+            "datapoints_to_alarm": 0,
+            "dimensions": {
+              "FunctionName": "url-dev"
+            },
+            "evaluate_low_sample_count_percentiles": "",
+            "evaluation_periods": 1,
+            "extended_statistic": "",
+            "id": "url-dev-lambda-errors",
+            "insufficient_data_actions": [],
+            "metric_name": "Errors",
+            "metric_query": [],
+            "namespace": "AWS/Lambda",
+            "ok_actions": [],
+            "period": 300,
+            "statistic": "Sum",
+            "tags": {
+              "Project": "url-shortener",
+              "Stage": "dev"
+            },
+            "tags_all": {
+              "Project": "url-shortener",
+              "Stage": "dev"
+            },
+            "threshold": 1,
+            "threshold_metric_id": "",
+            "treat_missing_data": "notBreaching",
+            "unit": ""
+          },
+          "sensitive_attributes": [],
+          "private": "eyJzY2hlbWFfdmVyc2lvbiI6IjEifQ==",
+          "dependencies": [
+            "aws_cloudwatch_log_group.lambda",
+            "aws_dynamodb_table.urls",
+            "aws_iam_role.lambda",
+            "aws_lambda_function.url",
+            "data.archive_file.lambda_zip",
+            "data.aws_iam_policy_document.lambda_trust"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_dynamodb_table",
+      "name": "tf_lock",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 1,
+          "attributes": {
+            "arn": "arn:aws:dynamodb:eu-west-2:416162027738:table/tf-lock-dev",
+            "attribute": [
+              {
+                "name": "LockID",
+                "type": "S"
+              }
+            ],
+            "billing_mode": "PAY_PER_REQUEST",
+            "deletion_protection_enabled": false,
+            "global_secondary_index": [],
+            "hash_key": "LockID",
+            "id": "tf-lock-dev",
+            "import_table": [],
+            "local_secondary_index": [],
+            "name": "tf-lock-dev",
+            "on_demand_throughput": [],
+            "point_in_time_recovery": [
+              {
+                "enabled": false,
+                "recovery_period_in_days": 0
+              }
+            ],
+            "range_key": null,
+            "read_capacity": 0,
+            "replica": [],
+            "restore_date_time": null,
+            "restore_source_name": null,
+            "restore_source_table_arn": null,
+            "restore_to_latest_time": null,
+            "server_side_encryption": [],
+            "stream_arn": "",
+            "stream_enabled": false,
+            "stream_label": "",
+            "stream_view_type": "",
+            "table_class": "STANDARD",
+            "tags": {
+              "Project": "url-shortener",
+              "Stage": "dev"
+            },
+            "tags_all": {
+              "Project": "url-shortener",
+              "Stage": "dev"
+            },
+            "timeouts": null,
+            "ttl": [
+              {
+                "attribute_name": "",
+                "enabled": false
+              }
+            ],
+            "write_capacity": 0
+          },
+          "sensitive_attributes": [],
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjoxODAwMDAwMDAwMDAwLCJkZWxldGUiOjYwMDAwMDAwMDAwMCwidXBkYXRlIjozNjAwMDAwMDAwMDAwfSwic2NoZW1hX3ZlcnNpb24iOiIxIn0="
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_dynamodb_table",
+      "name": "urls",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 1,
+          "attributes": {
+            "arn": "arn:aws:dynamodb:eu-west-2:416162027738:table/urls_dev",
+            "attribute": [
+              {
+                "name": "shortcode",
+                "type": "S"
+              }
+            ],
+            "billing_mode": "PAY_PER_REQUEST",
+            "deletion_protection_enabled": false,
+            "global_secondary_index": [],
+            "hash_key": "shortcode",
+            "id": "urls_dev",
+            "import_table": [],
+            "local_secondary_index": [],
+            "name": "urls_dev",
+            "on_demand_throughput": [],
+            "point_in_time_recovery": [
+              {
+                "enabled": false,
+                "recovery_period_in_days": 0
+              }
+            ],
+            "range_key": null,
+            "read_capacity": 0,
+            "replica": [],
+            "restore_date_time": null,
+            "restore_source_name": null,
+            "restore_source_table_arn": null,
+            "restore_to_latest_time": null,
+            "server_side_encryption": [],
+            "stream_arn": "",
+            "stream_enabled": false,
+            "stream_label": "",
+            "stream_view_type": "",
+            "table_class": "STANDARD",
+            "tags": {
+              "Project": "url-shortener",
+              "Stage": "dev"
+            },
+            "tags_all": {
+              "Project": "url-shortener",
+              "Stage": "dev"
+            },
+            "timeouts": null,
+            "ttl": [
+              {
+                "attribute_name": "expiresAt",
+                "enabled": true
+              }
+            ],
+            "write_capacity": 0
+          },
+          "sensitive_attributes": [],
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjoxODAwMDAwMDAwMDAwLCJkZWxldGUiOjYwMDAwMDAwMDAwMCwidXBkYXRlIjozNjAwMDAwMDAwMDAwfSwic2NoZW1hX3ZlcnNpb24iOiIxIn0="
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_iam_openid_connect_provider",
+      "name": "github",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "arn": "arn:aws:iam::416162027738:oidc-provider/token.actions.githubusercontent.com",
+            "client_id_list": [
+              "sts.amazonaws.com"
+            ],
+            "id": "arn:aws:iam::416162027738:oidc-provider/token.actions.githubusercontent.com",
+            "tags": {},
+            "tags_all": {},
+            "thumbprint_list": [
+              "6938fd4d98bab03faadb97b34396831e3780aea1",
+              "1c58a3a8518e8759bf075b76b750d4f2df264fcd"
+            ],
+            "url": "token.actions.githubusercontent.com"
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA=="
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_iam_policy",
+      "name": "gha_apply_app",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "arn": "arn:aws:iam::416162027738:policy/url-dev-gha-apply-app",
+            "attachment_count": 1,
+            "description": "Deploy perms for Lambda, API GW v2, DynamoDB, Logs, CW (eu-west-2)",
+            "id": "arn:aws:iam::416162027738:policy/url-dev-gha-apply-app",
+            "name": "url-dev-gha-apply-app",
+            "name_prefix": "",
+            "path": "/",
+            "policy": "{\"Statement\":[{\"Action\":[\"lambda:UpdateFunctionConfiguration\",\"lambda:UpdateFunctionCode\",\"lambda:UpdateAlias\",\"lambda:UntagResource\",\"lambda:TagResource\",\"lambda:RemovePermission\",\"lambda:PublishVersion\",\"lambda:List*\",\"lambda:Get*\",\"lambda:DeleteFunction\",\"lambda:DeleteAlias\",\"lambda:CreateFunction\",\"lambda:CreateAlias\",\"lambda:AddPermission\"],\"Condition\":{\"StringEquals\":{\"aws:RequestedRegion\":\"eu-west-2\"}},\"Effect\":\"Allow\",\"Resource\":\"*\",\"Sid\":\"LambdaManage\"},{\"Action\":[\"apigateway:PUT\",\"apigateway:POST\",\"apigateway:PATCH\",\"apigateway:GET\",\"apigateway:DELETE\"],\"Condition\":{\"StringEquals\":{\"aws:RequestedRegion\":\"eu-west-2\"}},\"Effect\":\"Allow\",\"Resource\":\"*\",\"Sid\":\"ApiGatewayV2Manage\"},{\"Action\":[\"dynamodb:UpdateTimeToLive\",\"dynamodb:UpdateTable\",\"dynamodb:UntagResource\",\"dynamodb:TagResource\",\"dynamodb:ListTagsOfResource\",\"dynamodb:ListTables\",\"dynamodb:DescribeTimeToLive\",\"dynamodb:DescribeTable\",\"dynamodb:DescribeContinuousBackups\",\"dynamodb:DeleteTable\",\"dynamodb:CreateTable\"],\"Effect\":\"Allow\",\"Resource\":\"arn:aws:dynamodb:eu-west-2:416162027738:table/*\",\"Sid\":\"DynamoDbManageTables\"},{\"Action\":[\"logs:PutRetentionPolicy\",\"logs:ListTagsForResource\",\"logs:DescribeLogStreams\",\"logs:DescribeLogGroups\",\"logs:DeleteLogGroup\",\"logs:CreateLogStream\",\"logs:CreateLogGroup\",\"cloudwatch:UntagResource\",\"cloudwatch:TagResource\",\"cloudwatch:PutMetricAlarm\",\"cloudwatch:ListTagsForResource\",\"cloudwatch:DescribeAlarms\",\"cloudwatch:DeleteAlarms\"],\"Condition\":{\"StringEquals\":{\"aws:RequestedRegion\":\"eu-west-2\"}},\"Effect\":\"Allow\",\"Resource\":\"*\",\"Sid\":\"LogsAndCloudWatch\"},{\"Action\":[\"iam:UpdateRole\",\"iam:UpdateAssumeRolePolicy\",\"iam:UntagRole\",\"iam:TagRole\",\"iam:SetDefaultPolicyVersion\",\"iam:PutRolePolicy\",\"iam:PassRole\",\"iam:ListRolePolicies\",\"iam:ListAttachedRolePolicies\",\"iam:GetRole\",\"iam:DetachRolePolicy\",\"iam:DeleteRolePolicy\",\"iam:DeleteRole\",\"iam:DeletePolicyVersion\",\"iam:DeletePolicy\",\"iam:CreateRole\",\"iam:CreatePolicyVersion\",\"iam:CreatePolicy\",\"iam:AttachRolePolicy\"],\"Effect\":\"Allow\",\"Resource\":[\"arn:aws:iam::416162027738:role/url-*\",\"arn:aws:iam::416162027738:role/*lambda*\",\"arn:aws:iam::416162027738:policy/url-*\",\"arn:aws:iam::416162027738:policy/*lambda*\"],\"Sid\":\"IamForLambdaExec\"}],\"Version\":\"2012-10-17\"}",
+            "policy_id": "ANPAWBZJQTDNADADEYXXO",
+            "tags": {},
+            "tags_all": {}
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA==",
+          "dependencies": [
+            "data.aws_iam_policy_document.gha_apply_app"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_iam_policy",
+      "name": "gha_apply_backend",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "arn": "arn:aws:iam::416162027738:policy/url-dev-gha-apply-backend",
+            "attachment_count": 1,
+            "description": "Backend (S3+DDB lock) RW for Terraform apply; includes required reads",
+            "id": "arn:aws:iam::416162027738:policy/url-dev-gha-apply-backend",
+            "name": "url-dev-gha-apply-backend",
+            "name_prefix": "",
+            "path": "/",
+            "policy": "{\"Statement\":[{\"Action\":[\"s3:ListBucket\",\"s3:Get*\"],\"Effect\":\"Allow\",\"Resource\":\"arn:aws:s3:::urlshortenerlarriephill\",\"Sid\":\"S3BucketMetaReads\"},{\"Action\":[\"s3:PutObject\",\"s3:GetObject\",\"s3:DeleteObject\"],\"Effect\":\"Allow\",\"Resource\":\"arn:aws:s3:::urlshortenerlarriephill/*\",\"Sid\":\"S3StateRw\"},{\"Action\":[\"dynamodb:PutItem\",\"dynamodb:ListTagsOfResource\",\"dynamodb:GetItem\",\"dynamodb:DescribeTable\",\"dynamodb:DescribeContinuousBackups\",\"dynamodb:DeleteItem\"],\"Effect\":\"Allow\",\"Resource\":\"arn:aws:dynamodb:eu-west-2:416162027738:table/tf-lock-dev\",\"Sid\":\"DDBStateLock\"}],\"Version\":\"2012-10-17\"}",
+            "policy_id": "ANPAWBZJQTDNHM2KCKWWB",
+            "tags": {},
+            "tags_all": {}
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA==",
+          "dependencies": [
+            "data.aws_iam_policy_document.gha_apply_backend"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_iam_policy",
+      "name": "gha_apply_iam_read",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "arn": "arn:aws:iam::416162027738:policy/url-dev-gha-apply-iam-readonly",
+            "attachment_count": 1,
+            "description": "Allow IAM read-only for Terraform refresh",
+            "id": "arn:aws:iam::416162027738:policy/url-dev-gha-apply-iam-readonly",
+            "name": "url-dev-gha-apply-iam-readonly",
+            "name_prefix": "",
+            "path": "/",
+            "policy": "{\"Statement\":[{\"Action\":[\"iam:List*\",\"iam:Get*\"],\"Effect\":\"Allow\",\"Resource\":\"*\",\"Sid\":\"IamReadOnly\"}],\"Version\":\"2012-10-17\"}",
+            "policy_id": "ANPAWBZJQTDNB53C6ZNLT",
+            "tags": {},
+            "tags_all": {}
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA==",
+          "dependencies": [
+            "data.aws_iam_policy_document.gha_apply_iam_read"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_iam_policy",
+      "name": "gha_apply_manage_url_policies",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "arn": "arn:aws:iam::416162027738:policy/url-dev-gha-apply-manage-url-policies",
+            "attachment_count": 1,
+            "description": "Allow apply role to manage url-* customer-managed policies",
+            "id": "arn:aws:iam::416162027738:policy/url-dev-gha-apply-manage-url-policies",
+            "name": "url-dev-gha-apply-manage-url-policies",
+            "name_prefix": "",
+            "path": "/",
+            "policy": "{\"Statement\":[{\"Action\":[\"iam:SetDefaultPolicyVersion\",\"iam:ListPolicyVersions\",\"iam:GetPolicy\",\"iam:DeletePolicyVersion\",\"iam:DeletePolicy\",\"iam:CreatePolicyVersion\",\"iam:CreatePolicy\"],\"Effect\":\"Allow\",\"Resource\":[\"arn:aws:iam::416162027738:policy/url_*\",\"arn:aws:iam::416162027738:policy/url-*\"],\"Sid\":\"ManageUrlPolicies\"}],\"Version\":\"2012-10-17\"}",
+            "policy_id": "ANPAWBZJQTDNCUPEQ7FL2",
+            "tags": {},
+            "tags_all": {}
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA==",
+          "dependencies": [
+            "data.aws_iam_policy_document.gha_apply_manage_url_policies"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_iam_policy",
+      "name": "gha_apply_self_desc",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "arn": "arn:aws:iam::416162027738:policy/url-dev-gha-apply-self-desc",
+            "attachment_count": 1,
+            "description": "Allow apply role to update its own description only",
+            "id": "arn:aws:iam::416162027738:policy/url-dev-gha-apply-self-desc",
+            "name": "url-dev-gha-apply-self-desc",
+            "name_prefix": "",
+            "path": "/",
+            "policy": "{\"Statement\":[{\"Action\":\"iam:UpdateRoleDescription\",\"Effect\":\"Allow\",\"Resource\":\"arn:aws:iam::416162027738:role/url-dev-gha-apply\",\"Sid\":\"UpdateOwnDescription\"}],\"Version\":\"2012-10-17\"}",
+            "policy_id": "ANPAWBZJQTDNJOAZTZGEE",
+            "tags": {},
+            "tags_all": {}
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA==",
+          "dependencies": [
+            "data.aws_iam_policy_document.gha_apply_self_desc"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_iam_policy",
+      "name": "gha_plan_backend",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "arn": "arn:aws:iam::416162027738:policy/url-dev-gha-plan-backend",
+            "attachment_count": 1,
+            "description": "Read S3 backend + DDB lock permissions for plan",
+            "id": "arn:aws:iam::416162027738:policy/url-dev-gha-plan-backend",
+            "name": "url-dev-gha-plan-backend",
+            "name_prefix": "",
+            "path": "/",
+            "policy": "{\"Statement\":[{\"Action\":\"apigateway:GET\",\"Effect\":\"Allow\",\"Resource\":\"arn:aws:apigateway:eu-west-2::/apis*\",\"Sid\":\"ApiGatewayV2Read\"},{\"Action\":\"logs:DescribeLogGroups\",\"Effect\":\"Allow\",\"Resource\":\"*\",\"Sid\":\"CloudWatchLogsDescribe\"},{\"Action\":[\"iam:ListPolicyVersions\",\"iam:GetRole\",\"iam:GetPolicy\",\"iam:GetOpenIDConnectProvider\"],\"Effect\":\"Allow\",\"Resource\":[\"arn:aws:iam::416162027738:role/url-*\",\"arn:aws:iam::416162027738:policy/url-*\",\"arn:aws:iam::416162027738:oidc-provider/token.actions.githubusercontent.com\"],\"Sid\":\"IamRead\"},{\"Action\":[\"dynamodb:DescribeTable\",\"dynamodb:DescribeContinuousBackups\"],\"Effect\":\"Allow\",\"Resource\":\"arn:aws:dynamodb:eu-west-2:416162027738:table/*\",\"Sid\":\"DynamoDbDescribe\"},{\"Action\":[\"s3:ListBucket\",\"s3:GetPublicAccessBlock\",\"s3:GetEncryptionConfiguration\",\"s3:GetBucketVersioning\",\"s3:GetBucketTagging\",\"s3:GetBucketPolicy\",\"s3:GetBucketLocation\"],\"Effect\":\"Allow\",\"Resource\":\"arn:aws:s3:::urlshortenerlarriephill\",\"Sid\":\"S3BackendRead\"},{\"Action\":[\"dynamodb:UpdateItem\",\"dynamodb:PutItem\",\"dynamodb:GetItem\",\"dynamodb:DeleteItem\"],\"Effect\":\"Allow\",\"Resource\":\"arn:aws:dynamodb:eu-west-2:416162027738:table/tf-lock-dev\",\"Sid\":\"DynamoDbLockWrite\"},{\"Action\":[\"s3:ListBucketMultipartUploads\",\"s3:GetObject\"],\"Effect\":\"Allow\",\"Resource\":\"arn:aws:s3:::urlshortenerlarriephill/*\",\"Sid\":\"S3BackendObjectsRead\"}],\"Version\":\"2012-10-17\"}",
+            "policy_id": "ANPAWBZJQTDNNUPG5Z7MQ",
+            "tags": {},
+            "tags_all": {}
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA==",
+          "dependencies": [
+            "aws_dynamodb_table.tf_lock",
+            "aws_s3_bucket.tf_state",
+            "data.aws_caller_identity.me",
+            "data.aws_iam_policy_document.gha_plan_backend",
+            "data.aws_region.current"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_iam_policy",
+      "name": "lambda_dynamodb",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "arn": "arn:aws:iam::416162027738:policy/url_lambda_dynamodb_dev",
+            "attachment_count": 1,
+            "description": "",
+            "id": "arn:aws:iam::416162027738:policy/url_lambda_dynamodb_dev",
+            "name": "url_lambda_dynamodb_dev",
+            "name_prefix": "",
+            "path": "/",
+            "policy": "{\"Statement\":[{\"Action\":[\"dynamodb:PutItem\",\"dynamodb:GetItem\"],\"Effect\":\"Allow\",\"Resource\":\"arn:aws:dynamodb:eu-west-2:416162027738:table/urls_dev\"}],\"Version\":\"2012-10-17\"}",
+            "policy_id": "ANPAWBZJQTDNHQWXPD5PK",
+            "tags": {},
+            "tags_all": {}
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA==",
+          "dependencies": [
+            "aws_dynamodb_table.urls",
+            "data.aws_iam_policy_document.lambda_dynamodb"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_iam_policy",
+      "name": "lambda_logs",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "arn": "arn:aws:iam::416162027738:policy/url_lambda_logs_dev",
+            "attachment_count": 1,
+            "description": "",
+            "id": "arn:aws:iam::416162027738:policy/url_lambda_logs_dev",
+            "name": "url_lambda_logs_dev",
+            "name_prefix": "",
+            "path": "/",
+            "policy": "{\"Statement\":[{\"Action\":[\"logs:PutLogEvents\",\"logs:CreateLogStream\",\"logs:CreateLogGroup\"],\"Effect\":\"Allow\",\"Resource\":\"arn:aws:logs:eu-west-2:416162027738:*\"}],\"Version\":\"2012-10-17\"}",
+            "policy_id": "ANPAWBZJQTDNATQP7V3QR",
+            "tags": {},
+            "tags_all": {}
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA==",
+          "dependencies": [
+            "data.aws_caller_identity.me",
+            "data.aws_iam_policy_document.lambda_logs",
+            "data.aws_region.current"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_iam_policy",
+      "name": "lambda_metrics",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "arn": "arn:aws:iam::416162027738:policy/url_lambda_metrics_dev",
+            "attachment_count": 1,
+            "description": "",
+            "id": "arn:aws:iam::416162027738:policy/url_lambda_metrics_dev",
+            "name": "url_lambda_metrics_dev",
+            "name_prefix": "",
+            "path": "/",
+            "policy": "{\"Statement\":[{\"Action\":\"cloudwatch:PutMetricData\",\"Condition\":{\"StringEquals\":{\"cloudwatch:namespace\":\"UrlShortener\"}},\"Effect\":\"Allow\",\"Resource\":\"*\",\"Sid\":\"PutCustomMetrics\"}],\"Version\":\"2012-10-17\"}",
+            "policy_id": "ANPAWBZJQTDNKOR2MJ2YP",
+            "tags": {},
+            "tags_all": {}
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA==",
+          "dependencies": [
+            "data.aws_iam_policy_document.lambda_metrics"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_iam_role",
+      "name": "gha_apply",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "arn": "arn:aws:iam::416162027738:role/url-dev-gha-apply",
+            "assume_role_policy": "{\"Statement\":[{\"Action\":\"sts:AssumeRoleWithWebIdentity\",\"Condition\":{\"StringEquals\":{\"token.actions.githubusercontent.com:aud\":\"sts.amazonaws.com\",\"token.actions.githubusercontent.com:sub\":[\"repo:larriephill/url-shortener:environment:dev\",\"repo:Larriephill/url-shortener:environment:dev\"]}},\"Effect\":\"Allow\",\"Principal\":{\"Federated\":\"arn:aws:iam::416162027738:oidc-provider/token.actions.githubusercontent.com\"}}],\"Version\":\"2012-10-17\"}",
+            "create_date": "2025-08-14T17:02:22Z",
+            "description": "",
+            "force_detach_policies": false,
+            "id": "url-dev-gha-apply",
+            "inline_policy": [],
+            "managed_policy_arns": [
+              "arn:aws:iam::416162027738:policy/url-dev-gha-apply-app",
+              "arn:aws:iam::416162027738:policy/url-dev-gha-apply-backend",
+              "arn:aws:iam::416162027738:policy/url-dev-gha-apply-iam-readonly",
+              "arn:aws:iam::416162027738:policy/url-dev-gha-apply-manage-url-policies",
+              "arn:aws:iam::416162027738:policy/url-dev-gha-apply-self-desc"
+            ],
+            "max_session_duration": 3600,
+            "name": "url-dev-gha-apply",
+            "name_prefix": "",
+            "path": "/",
+            "permissions_boundary": "",
+            "tags": {},
+            "tags_all": {},
+            "unique_id": "AROAWBZJQTDNPULMZTRPB"
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA==",
+          "dependencies": [
+            "aws_iam_openid_connect_provider.github",
+            "data.aws_iam_policy_document.gha_oidc_trust_apply"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_iam_role",
+      "name": "gha_plan",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "arn": "arn:aws:iam::416162027738:role/url-dev-gha-plan",
+            "assume_role_policy": "{\"Statement\":[{\"Action\":\"sts:AssumeRoleWithWebIdentity\",\"Condition\":{\"StringEquals\":{\"token.actions.githubusercontent.com:aud\":\"sts.amazonaws.com\"},\"StringLike\":{\"token.actions.githubusercontent.com:sub\":[\"repo:larriephill/url-shortener:ref:refs/heads/dev\",\"repo:Larriephill/url-shortener:ref:refs/heads/dev\",\"repo:larriephill/url-shortener:pull_request\",\"repo:Larriephill/url-shortener:pull_request\"]}},\"Effect\":\"Allow\",\"Principal\":{\"Federated\":\"arn:aws:iam::416162027738:oidc-provider/token.actions.githubusercontent.com\"}}],\"Version\":\"2012-10-17\"}",
+            "create_date": "2025-08-12T20:09:40Z",
+            "description": "",
+            "force_detach_policies": false,
+            "id": "url-dev-gha-plan",
+            "inline_policy": [],
+            "managed_policy_arns": [
+              "arn:aws:iam::416162027738:policy/url-dev-gha-plan-backend",
+              "arn:aws:iam::aws:policy/ReadOnlyAccess"
+            ],
+            "max_session_duration": 3600,
+            "name": "url-dev-gha-plan",
+            "name_prefix": "",
+            "path": "/",
+            "permissions_boundary": "",
+            "tags": {},
+            "tags_all": {},
+            "unique_id": "AROAWBZJQTDNGYQ43I3H3"
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA==",
+          "dependencies": [
+            "aws_iam_openid_connect_provider.github",
+            "data.aws_iam_policy_document.gha_oidc_trust"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_iam_role",
+      "name": "lambda",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "arn": "arn:aws:iam::416162027738:role/url_lambda_role_dev",
+            "assume_role_policy": "{\"Statement\":[{\"Action\":\"sts:AssumeRole\",\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"lambda.amazonaws.com\"}}],\"Version\":\"2012-10-17\"}",
+            "create_date": "2025-08-08T22:32:44Z",
+            "description": "",
+            "force_detach_policies": false,
+            "id": "url_lambda_role_dev",
+            "inline_policy": [],
+            "managed_policy_arns": [
+              "arn:aws:iam::416162027738:policy/url_lambda_dynamodb_dev",
+              "arn:aws:iam::416162027738:policy/url_lambda_logs_dev",
+              "arn:aws:iam::416162027738:policy/url_lambda_metrics_dev"
+            ],
+            "max_session_duration": 3600,
+            "name": "url_lambda_role_dev",
+            "name_prefix": "",
+            "path": "/",
+            "permissions_boundary": "",
+            "tags": {
+              "Project": "url-shortener",
+              "Stage": "dev"
+            },
+            "tags_all": {
+              "Project": "url-shortener",
+              "Stage": "dev"
+            },
+            "unique_id": "AROAWBZJQTDNALLEIC6TI"
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA==",
+          "dependencies": [
+            "data.aws_iam_policy_document.lambda_trust"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_iam_role_policy_attachment",
+      "name": "attach_dynamodb",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "id": "url_lambda_role_dev-20250808223245201900000002",
+            "policy_arn": "arn:aws:iam::416162027738:policy/url_lambda_dynamodb_dev",
+            "role": "url_lambda_role_dev"
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA==",
+          "dependencies": [
+            "aws_dynamodb_table.urls",
+            "aws_iam_policy.lambda_dynamodb",
+            "aws_iam_role.lambda",
+            "data.aws_iam_policy_document.lambda_dynamodb",
+            "data.aws_iam_policy_document.lambda_trust"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_iam_role_policy_attachment",
+      "name": "attach_logs",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "id": "url_lambda_role_dev-20250808223245186200000001",
+            "policy_arn": "arn:aws:iam::416162027738:policy/url_lambda_logs_dev",
+            "role": "url_lambda_role_dev"
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA==",
+          "dependencies": [
+            "aws_iam_policy.lambda_logs",
+            "aws_iam_role.lambda",
+            "data.aws_caller_identity.me",
+            "data.aws_iam_policy_document.lambda_logs",
+            "data.aws_iam_policy_document.lambda_trust",
+            "data.aws_region.current"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_iam_role_policy_attachment",
+      "name": "attach_metrics",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "id": "url_lambda_role_dev-20250827171831679300000001",
+            "policy_arn": "arn:aws:iam::416162027738:policy/url_lambda_metrics_dev",
+            "role": "url_lambda_role_dev"
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA==",
+          "dependencies": [
+            "aws_iam_policy.lambda_metrics",
+            "aws_iam_role.lambda",
+            "data.aws_iam_policy_document.lambda_metrics",
+            "data.aws_iam_policy_document.lambda_trust"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_iam_role_policy_attachment",
+      "name": "gha_apply_attach_app",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "id": "url-dev-gha-apply-20250825153339881900000004",
+            "policy_arn": "arn:aws:iam::416162027738:policy/url-dev-gha-apply-app",
+            "role": "url-dev-gha-apply"
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA==",
+          "dependencies": [
+            "aws_iam_openid_connect_provider.github",
+            "aws_iam_policy.gha_apply_app",
+            "aws_iam_role.gha_apply",
+            "data.aws_iam_policy_document.gha_apply_app",
+            "data.aws_iam_policy_document.gha_oidc_trust_apply"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_iam_role_policy_attachment",
+      "name": "gha_apply_attach_backend",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "id": "url-dev-gha-apply-20250825153339958800000005",
+            "policy_arn": "arn:aws:iam::416162027738:policy/url-dev-gha-apply-backend",
+            "role": "url-dev-gha-apply"
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA==",
+          "dependencies": [
+            "aws_iam_openid_connect_provider.github",
+            "aws_iam_policy.gha_apply_backend",
+            "aws_iam_role.gha_apply",
+            "data.aws_iam_policy_document.gha_apply_backend",
+            "data.aws_iam_policy_document.gha_oidc_trust_apply"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_iam_role_policy_attachment",
+      "name": "gha_apply_attach_iam_read",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "id": "url-dev-gha-apply-20250821184428908200000001",
+            "policy_arn": "arn:aws:iam::416162027738:policy/url-dev-gha-apply-iam-readonly",
+            "role": "url-dev-gha-apply"
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA==",
+          "dependencies": [
+            "aws_iam_openid_connect_provider.github",
+            "aws_iam_policy.gha_apply_iam_read",
+            "aws_iam_role.gha_apply",
+            "data.aws_iam_policy_document.gha_apply_iam_read",
+            "data.aws_iam_policy_document.gha_oidc_trust_apply"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_iam_role_policy_attachment",
+      "name": "gha_apply_attach_manage_url_policies",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "id": "url-dev-gha-apply-20250825153339361600000003",
+            "policy_arn": "arn:aws:iam::416162027738:policy/url-dev-gha-apply-manage-url-policies",
+            "role": "url-dev-gha-apply"
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA==",
+          "dependencies": [
+            "aws_iam_openid_connect_provider.github",
+            "aws_iam_policy.gha_apply_manage_url_policies",
+            "aws_iam_role.gha_apply",
+            "data.aws_iam_policy_document.gha_apply_manage_url_policies",
+            "data.aws_iam_policy_document.gha_oidc_trust_apply"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_iam_role_policy_attachment",
+      "name": "gha_apply_attach_self_desc",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "id": "url-dev-gha-apply-20250825153339302500000002",
+            "policy_arn": "arn:aws:iam::416162027738:policy/url-dev-gha-apply-self-desc",
+            "role": "url-dev-gha-apply"
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA==",
+          "dependencies": [
+            "aws_iam_openid_connect_provider.github",
+            "aws_iam_policy.gha_apply_self_desc",
+            "aws_iam_role.gha_apply",
+            "data.aws_iam_policy_document.gha_apply_self_desc",
+            "data.aws_iam_policy_document.gha_oidc_trust_apply"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_iam_role_policy_attachment",
+      "name": "gha_plan_attach",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "id": "url-dev-gha-plan-20250821174129341000000001",
+            "policy_arn": "arn:aws:iam::416162027738:policy/url-dev-gha-plan-backend",
+            "role": "url-dev-gha-plan"
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA==",
+          "dependencies": [
+            "aws_dynamodb_table.tf_lock",
+            "aws_iam_openid_connect_provider.github",
+            "aws_iam_policy.gha_plan_backend",
+            "aws_iam_role.gha_plan",
+            "aws_s3_bucket.tf_state",
+            "data.aws_caller_identity.me",
+            "data.aws_iam_policy_document.gha_oidc_trust",
+            "data.aws_iam_policy_document.gha_plan_backend",
+            "data.aws_region.current"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_iam_role_policy_attachment",
+      "name": "plan_readonly",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "id": "url-dev-gha-plan-20250825154946842700000001",
+            "policy_arn": "arn:aws:iam::aws:policy/ReadOnlyAccess",
+            "role": "url-dev-gha-plan"
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA==",
+          "dependencies": [
+            "aws_iam_openid_connect_provider.github",
+            "aws_iam_role.gha_plan",
+            "data.aws_iam_policy_document.gha_oidc_trust"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_lambda_function",
+      "name": "url",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "architectures": [
+              "x86_64"
+            ],
+            "arn": "arn:aws:lambda:eu-west-2:416162027738:function:url-dev",
+            "code_sha256": "nmos1fTLNfp36i5IkDlF+oZ5DQkePJ2sFzhRQKnUePw=",
+            "code_signing_config_arn": "",
+            "dead_letter_config": [],
+            "description": "",
+            "environment": [
+              {
+                "variables": {
+                  "METRICS_ENABLED": "true",
+                  "STAGE": "dev",
+                  "TABLE": "urls_dev",
+                  "TTL_DAYS": "30"
+                }
+              }
+            ],
+            "ephemeral_storage": [
+              {
+                "size": 512
+              }
+            ],
+            "file_system_config": [],
+            "filename": "./lambda.zip",
+            "function_name": "url-dev",
+            "handler": "handler.lambda_handler",
+            "id": "url-dev",
+            "image_config": [],
+            "image_uri": "",
+            "invoke_arn": "arn:aws:apigateway:eu-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-2:416162027738:function:url-dev/invocations",
+            "kms_key_arn": "",
+            "last_modified": "2025-09-02T19:11:06.000+0000",
+            "layers": [],
+            "logging_config": [
+              {
+                "application_log_level": "",
+                "log_format": "Text",
+                "log_group": "/aws/lambda/url-dev",
+                "system_log_level": ""
+              }
+            ],
+            "memory_size": 128,
+            "package_type": "Zip",
+            "publish": false,
+            "qualified_arn": "arn:aws:lambda:eu-west-2:416162027738:function:url-dev:$LATEST",
+            "qualified_invoke_arn": "arn:aws:apigateway:eu-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-2:416162027738:function:url-dev:$LATEST/invocations",
+            "replace_security_groups_on_destroy": null,
+            "replacement_security_group_ids": null,
+            "reserved_concurrent_executions": -1,
+            "role": "arn:aws:iam::416162027738:role/url_lambda_role_dev",
+            "runtime": "python3.12",
+            "s3_bucket": null,
+            "s3_key": null,
+            "s3_object_version": null,
+            "signing_job_arn": "",
+            "signing_profile_version_arn": "",
+            "skip_destroy": false,
+            "snap_start": [],
+            "source_code_hash": "nmos1fTLNfp36i5IkDlF+oZ5DQkePJ2sFzhRQKnUePw=",
+            "source_code_size": 4070,
+            "tags": {
+              "Project": "url-shortener",
+              "Stage": "dev"
+            },
+            "tags_all": {
+              "Project": "url-shortener",
+              "Stage": "dev"
+            },
+            "timeout": 5,
+            "timeouts": null,
+            "tracing_config": [
+              {
+                "mode": "PassThrough"
+              }
+            ],
+            "version": "$LATEST",
+            "vpc_config": []
+          },
+          "sensitive_attributes": [],
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjo2MDAwMDAwMDAwMDAsImRlbGV0ZSI6NjAwMDAwMDAwMDAwLCJ1cGRhdGUiOjYwMDAwMDAwMDAwMH19",
+          "dependencies": [
+            "aws_cloudwatch_log_group.lambda",
+            "aws_dynamodb_table.urls",
+            "aws_iam_role.lambda",
+            "data.archive_file.lambda_zip",
+            "data.aws_iam_policy_document.lambda_trust"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_lambda_permission",
+      "name": "apigw_invoke",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "action": "lambda:InvokeFunction",
+            "event_source_token": null,
+            "function_name": "url-dev",
+            "function_url_auth_type": null,
+            "id": "AllowAPIGatewayInvoke",
+            "principal": "apigateway.amazonaws.com",
+            "principal_org_id": null,
+            "qualifier": "",
+            "source_account": null,
+            "source_arn": "arn:aws:execute-api:eu-west-2:416162027738:764zo42j23/*/*",
+            "statement_id": "AllowAPIGatewayInvoke",
+            "statement_id_prefix": ""
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA==",
+          "dependencies": [
+            "aws_apigatewayv2_api.http",
+            "aws_cloudwatch_log_group.lambda",
+            "aws_dynamodb_table.urls",
+            "aws_iam_role.lambda",
+            "aws_lambda_function.url",
+            "data.archive_file.lambda_zip",
+            "data.aws_iam_policy_document.lambda_trust"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_route53_record",
+      "name": "api_alias",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 2,
+          "attributes": {
+            "alias": [
+              {
+                "evaluate_target_health": false,
+                "name": "d-e50dn45tfi.execute-api.eu-west-2.amazonaws.com",
+                "zone_id": "ZJ5UAJN8Y3Z2Q"
+              }
+            ],
+            "allow_overwrite": null,
+            "cidr_routing_policy": [],
+            "failover_routing_policy": [],
+            "fqdn": "api.regalhorizon.click",
+            "geolocation_routing_policy": [],
+            "geoproximity_routing_policy": [],
+            "health_check_id": "",
+            "id": "Z06481721PFMTPJRW6Z9N_api.regalhorizon.click_A",
+            "latency_routing_policy": [],
+            "multivalue_answer_routing_policy": false,
+            "name": "api.regalhorizon.click",
+            "records": [],
+            "set_identifier": "",
+            "timeouts": null,
+            "ttl": 0,
+            "type": "A",
+            "weighted_routing_policy": [],
+            "zone_id": "Z06481721PFMTPJRW6Z9N"
+          },
+          "sensitive_attributes": [],
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjoxODAwMDAwMDAwMDAwLCJkZWxldGUiOjE4MDAwMDAwMDAwMDAsInVwZGF0ZSI6MTgwMDAwMDAwMDAwMH0sInNjaGVtYV92ZXJzaW9uIjoiMiJ9",
+          "dependencies": [
+            "aws_acm_certificate.api",
+            "aws_acm_certificate_validation.api",
+            "aws_apigatewayv2_domain_name.api",
+            "aws_route53_record.api_cert_validation",
+            "data.aws_route53_zone.root"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_route53_record",
+      "name": "api_cert_validation",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "index_key": "api.regalhorizon.click",
+          "schema_version": 2,
+          "attributes": {
+            "alias": [],
+            "allow_overwrite": null,
+            "cidr_routing_policy": [],
+            "failover_routing_policy": [],
+            "fqdn": "_c4eb2e26dc3a484304bad340b6f49ca8.api.regalhorizon.click",
+            "geolocation_routing_policy": [],
+            "geoproximity_routing_policy": [],
+            "health_check_id": "",
+            "id": "Z06481721PFMTPJRW6Z9N__c4eb2e26dc3a484304bad340b6f49ca8.api.regalhorizon.click._CNAME",
+            "latency_routing_policy": [],
+            "multivalue_answer_routing_policy": false,
+            "name": "_c4eb2e26dc3a484304bad340b6f49ca8.api.regalhorizon.click",
+            "records": [
+              "_71bdfff00af0f005fd4de882d4cb0d61.xlfgrmvvlj.acm-validations.aws."
+            ],
+            "set_identifier": "",
+            "timeouts": null,
+            "ttl": 60,
+            "type": "CNAME",
+            "weighted_routing_policy": [],
+            "zone_id": "Z06481721PFMTPJRW6Z9N"
+          },
+          "sensitive_attributes": [],
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjoxODAwMDAwMDAwMDAwLCJkZWxldGUiOjE4MDAwMDAwMDAwMDAsInVwZGF0ZSI6MTgwMDAwMDAwMDAwMH0sInNjaGVtYV92ZXJzaW9uIjoiMiJ9",
+          "dependencies": [
+            "aws_acm_certificate.api",
+            "data.aws_route53_zone.root"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_route53_record",
+      "name": "cf_alias",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "index_key": 0,
+          "schema_version": 2,
+          "attributes": {
+            "alias": [
+              {
+                "evaluate_target_health": false,
+                "name": "d192wr7ygfjmxf.cloudfront.net",
+                "zone_id": "Z2FDTNDATAQYW2"
+              }
+            ],
+            "allow_overwrite": true,
+            "cidr_routing_policy": [],
+            "failover_routing_policy": [],
+            "fqdn": "api.regalhorizon.click",
+            "geolocation_routing_policy": [],
+            "geoproximity_routing_policy": [],
+            "health_check_id": "",
+            "id": "Z06481721PFMTPJRW6Z9N_api.regalhorizon.click_A",
+            "latency_routing_policy": [],
+            "multivalue_answer_routing_policy": false,
+            "name": "api.regalhorizon.click",
+            "records": [],
+            "set_identifier": "",
+            "timeouts": null,
+            "ttl": 0,
+            "type": "A",
+            "weighted_routing_policy": [],
+            "zone_id": "Z06481721PFMTPJRW6Z9N"
+          },
+          "sensitive_attributes": [],
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjoxODAwMDAwMDAwMDAwLCJkZWxldGUiOjE4MDAwMDAwMDAwMDAsInVwZGF0ZSI6MTgwMDAwMDAwMDAwMH0sInNjaGVtYV92ZXJzaW9uIjoiMiJ9",
+          "dependencies": [
+            "aws_acm_certificate.cf",
+            "aws_acm_certificate_validation.cf",
+            "aws_apigatewayv2_api.http",
+            "aws_cloudfront_distribution.api",
+            "aws_route53_record.cf_validation",
+            "aws_wafv2_web_acl.cf",
+            "data.aws_cloudfront_cache_policy.disabled",
+            "data.aws_cloudfront_origin_request_policy.all_viewer",
+            "data.aws_route53_zone.root"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_route53_record",
+      "name": "cf_alias_aaaa",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "index_key": 0,
+          "schema_version": 2,
+          "attributes": {
+            "alias": [
+              {
+                "evaluate_target_health": false,
+                "name": "d192wr7ygfjmxf.cloudfront.net",
+                "zone_id": "Z2FDTNDATAQYW2"
+              }
+            ],
+            "allow_overwrite": true,
+            "cidr_routing_policy": [],
+            "failover_routing_policy": [],
+            "fqdn": "api.regalhorizon.click",
+            "geolocation_routing_policy": [],
+            "geoproximity_routing_policy": [],
+            "health_check_id": "",
+            "id": "Z06481721PFMTPJRW6Z9N_api.regalhorizon.click_AAAA",
+            "latency_routing_policy": [],
+            "multivalue_answer_routing_policy": false,
+            "name": "api.regalhorizon.click",
+            "records": [],
+            "set_identifier": "",
+            "timeouts": null,
+            "ttl": 0,
+            "type": "AAAA",
+            "weighted_routing_policy": [],
+            "zone_id": "Z06481721PFMTPJRW6Z9N"
+          },
+          "sensitive_attributes": [],
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjoxODAwMDAwMDAwMDAwLCJkZWxldGUiOjE4MDAwMDAwMDAwMDAsInVwZGF0ZSI6MTgwMDAwMDAwMDAwMH0sInNjaGVtYV92ZXJzaW9uIjoiMiJ9",
+          "dependencies": [
+            "aws_acm_certificate.cf",
+            "aws_acm_certificate_validation.cf",
+            "aws_apigatewayv2_api.http",
+            "aws_cloudfront_distribution.api",
+            "aws_route53_record.cf_validation",
+            "aws_wafv2_web_acl.cf",
+            "data.aws_cloudfront_cache_policy.disabled",
+            "data.aws_cloudfront_origin_request_policy.all_viewer",
+            "data.aws_route53_zone.root"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_route53_record",
+      "name": "cf_validation",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "index_key": "api.regalhorizon.click",
+          "schema_version": 2,
+          "attributes": {
+            "alias": [],
+            "allow_overwrite": true,
+            "cidr_routing_policy": [],
+            "failover_routing_policy": [],
+            "fqdn": "_c4eb2e26dc3a484304bad340b6f49ca8.api.regalhorizon.click",
+            "geolocation_routing_policy": [],
+            "geoproximity_routing_policy": [],
+            "health_check_id": "",
+            "id": "Z06481721PFMTPJRW6Z9N__c4eb2e26dc3a484304bad340b6f49ca8.api.regalhorizon.click._CNAME",
+            "latency_routing_policy": [],
+            "multivalue_answer_routing_policy": false,
+            "name": "_c4eb2e26dc3a484304bad340b6f49ca8.api.regalhorizon.click",
+            "records": [
+              "_71bdfff00af0f005fd4de882d4cb0d61.xlfgrmvvlj.acm-validations.aws."
+            ],
+            "set_identifier": "",
+            "timeouts": null,
+            "ttl": 60,
+            "type": "CNAME",
+            "weighted_routing_policy": [],
+            "zone_id": "Z06481721PFMTPJRW6Z9N"
+          },
+          "sensitive_attributes": [],
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjoxODAwMDAwMDAwMDAwLCJkZWxldGUiOjE4MDAwMDAwMDAwMDAsInVwZGF0ZSI6MTgwMDAwMDAwMDAwMH0sInNjaGVtYV92ZXJzaW9uIjoiMiJ9",
+          "dependencies": [
+            "aws_acm_certificate.cf",
+            "data.aws_route53_zone.root"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_s3_bucket",
+      "name": "tf_state",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "acceleration_status": "",
+            "acl": null,
+            "arn": "arn:aws:s3:::urlshortenerlarriephill",
+            "bucket": "urlshortenerlarriephill",
+            "bucket_domain_name": "urlshortenerlarriephill.s3.amazonaws.com",
+            "bucket_prefix": "",
+            "bucket_regional_domain_name": "urlshortenerlarriephill.s3.eu-west-2.amazonaws.com",
+            "cors_rule": [],
+            "force_destroy": false,
+            "grant": [
+              {
+                "id": "d3c9d6bd49e7c0c088682420eba1b8869ee2e3fbb3dc973412d02f231ce3b110",
+                "permissions": [
+                  "FULL_CONTROL"
+                ],
+                "type": "CanonicalUser",
+                "uri": ""
+              }
+            ],
+            "hosted_zone_id": "Z3GKZC51ZF0DB4",
+            "id": "urlshortenerlarriephill",
+            "lifecycle_rule": [],
+            "logging": [],
+            "object_lock_configuration": [],
+            "object_lock_enabled": false,
+            "policy": "{\"Statement\":[{\"Action\":[\"s3:GetObject\",\"s3:PutObject\",\"s3:DeleteObject\"],\"Effect\":\"Allow\",\"Principal\":{\"AWS\":[\"arn:aws:iam::416162027738:role/url-dev-gha-plan\",\"arn:aws:iam::416162027738:role/url-dev-gha-apply\"]},\"Resource\":\"arn:aws:s3:::urlshortenerlarriephill/state/*\",\"Sid\":\"AllowStateReadWriteForCIRoles\"},{\"Action\":\"s3:ListBucket\",\"Condition\":{\"StringLike\":{\"s3:prefix\":\"state/*\"}},\"Effect\":\"Allow\",\"Principal\":{\"AWS\":[\"arn:aws:iam::416162027738:role/url-dev-gha-plan\",\"arn:aws:iam::416162027738:role/url-dev-gha-apply\"]},\"Resource\":\"arn:aws:s3:::urlshortenerlarriephill\",\"Sid\":\"AllowListBucketForCIRoles\"}],\"Version\":\"2012-10-17\"}",
+            "region": "eu-west-2",
+            "replication_configuration": [],
+            "request_payer": "BucketOwner",
+            "server_side_encryption_configuration": [
+              {
+                "rule": [
+                  {
+                    "apply_server_side_encryption_by_default": [
+                      {
+                        "kms_master_key_id": "",
+                        "sse_algorithm": "AES256"
+                      }
+                    ],
+                    "bucket_key_enabled": false
+                  }
+                ]
+              }
+            ],
+            "tags": {
+              "Project": "url-shortener",
+              "Stage": "dev"
+            },
+            "tags_all": {
+              "Project": "url-shortener",
+              "Stage": "dev"
+            },
+            "timeouts": null,
+            "versioning": [
+              {
+                "enabled": true,
+                "mfa_delete": false
+              }
+            ],
+            "website": [],
+            "website_domain": null,
+            "website_endpoint": null
+          },
+          "sensitive_attributes": [],
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjoxMjAwMDAwMDAwMDAwLCJkZWxldGUiOjM2MDAwMDAwMDAwMDAsInJlYWQiOjEyMDAwMDAwMDAwMDAsInVwZGF0ZSI6MTIwMDAwMDAwMDAwMH19"
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_s3_bucket_public_access_block",
+      "name": "tf_state",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "block_public_acls": true,
+            "block_public_policy": true,
+            "bucket": "urlshortenerlarriephill",
+            "id": "urlshortenerlarriephill",
+            "ignore_public_acls": true,
+            "restrict_public_buckets": true
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA==",
+          "dependencies": [
+            "aws_s3_bucket.tf_state"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_s3_bucket_server_side_encryption_configuration",
+      "name": "tf_state",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "bucket": "urlshortenerlarriephill",
+            "expected_bucket_owner": "",
+            "id": "urlshortenerlarriephill",
+            "rule": [
+              {
+                "apply_server_side_encryption_by_default": [
+                  {
+                    "kms_master_key_id": "",
+                    "sse_algorithm": "AES256"
+                  }
+                ],
+                "bucket_key_enabled": false
+              }
+            ]
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA==",
+          "dependencies": [
+            "aws_s3_bucket.tf_state"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_s3_bucket_versioning",
+      "name": "tf_state",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "bucket": "urlshortenerlarriephill",
+            "expected_bucket_owner": "",
+            "id": "urlshortenerlarriephill",
+            "mfa": null,
+            "versioning_configuration": [
+              {
+                "mfa_delete": "",
+                "status": "Enabled"
+              }
+            ]
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA==",
+          "dependencies": [
+            "aws_s3_bucket.tf_state"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_wafv2_web_acl",
+      "name": "cf",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"].us_east_1",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "application_integration_url": "",
+            "arn": "arn:aws:wafv2:us-east-1:416162027738:global/webacl/url-shortener-dev-cf/65377b25-8503-4d0f-999e-e36edf0fa9d4",
+            "association_config": [],
+            "capacity": 927,
+            "captcha_config": [],
+            "challenge_config": [],
+            "custom_response_body": [],
+            "data_protection_config": [],
+            "default_action": [
+              {
+                "allow": [
+                  {
+                    "custom_request_handling": []
+                  }
+                ],
+                "block": []
+              }
+            ],
+            "description": "Protect HTTP API - managed rules",
+            "id": "65377b25-8503-4d0f-999e-e36edf0fa9d4",
+            "lock_token": "0e7be001-c3be-4457-8b59-22253db2d267",
+            "name": "url-shortener-dev-cf",
+            "name_prefix": "",
+            "rule": [
+              {
+                "action": [
+                  {
+                    "allow": [],
+                    "block": [
+                      {
+                        "custom_response": []
+                      }
+                    ],
+                    "captcha": [],
+                    "challenge": [],
+                    "count": []
+                  }
+                ],
+                "captcha_config": [],
+                "challenge_config": [],
+                "name": "RateLimitPerIP",
+                "override_action": [],
+                "priority": 10,
+                "rule_label": [],
+                "statement": [
+                  {
+                    "and_statement": [],
+                    "asn_match_statement": [],
+                    "byte_match_statement": [],
+                    "geo_match_statement": [],
+                    "ip_set_reference_statement": [],
+                    "label_match_statement": [],
+                    "managed_rule_group_statement": [],
+                    "not_statement": [],
+                    "or_statement": [],
+                    "rate_based_statement": [
+                      {
+                        "aggregate_key_type": "IP",
+                        "custom_key": [],
+                        "evaluation_window_sec": 300,
+                        "forwarded_ip_config": [],
+                        "limit": 2000,
+                        "scope_down_statement": []
+                      }
+                    ],
+                    "regex_match_statement": [],
+                    "regex_pattern_set_reference_statement": [],
+                    "rule_group_reference_statement": [],
+                    "size_constraint_statement": [],
+                    "sqli_match_statement": [],
+                    "xss_match_statement": []
+                  }
+                ],
+                "visibility_config": [
+                  {
+                    "cloudwatch_metrics_enabled": true,
+                    "metric_name": "RateLimitPerIP",
+                    "sampled_requests_enabled": true
+                  }
+                ]
+              },
+              {
+                "action": [],
+                "captcha_config": [],
+                "challenge_config": [],
+                "name": "AWS-AWSManagedRulesAmazonIpReputationList",
+                "override_action": [
+                  {
+                    "count": [
+                      {}
+                    ],
+                    "none": []
+                  }
+                ],
+                "priority": 3,
+                "rule_label": [],
+                "statement": [
+                  {
+                    "and_statement": [],
+                    "asn_match_statement": [],
+                    "byte_match_statement": [],
+                    "geo_match_statement": [],
+                    "ip_set_reference_statement": [],
+                    "label_match_statement": [],
+                    "managed_rule_group_statement": [
+                      {
+                        "managed_rule_group_configs": [],
+                        "name": "AWSManagedRulesAmazonIpReputationList",
+                        "rule_action_override": [],
+                        "scope_down_statement": [],
+                        "vendor_name": "AWS",
+                        "version": ""
+                      }
+                    ],
+                    "not_statement": [],
+                    "or_statement": [],
+                    "rate_based_statement": [],
+                    "regex_match_statement": [],
+                    "regex_pattern_set_reference_statement": [],
+                    "rule_group_reference_statement": [],
+                    "size_constraint_statement": [],
+                    "sqli_match_statement": [],
+                    "xss_match_statement": []
+                  }
+                ],
+                "visibility_config": [
+                  {
+                    "cloudwatch_metrics_enabled": true,
+                    "metric_name": "IpReputation",
+                    "sampled_requests_enabled": true
+                  }
+                ]
+              },
+              {
+                "action": [],
+                "captcha_config": [],
+                "challenge_config": [],
+                "name": "AWS-AWSManagedRulesCommonRuleSet",
+                "override_action": [
+                  {
+                    "count": [
+                      {}
+                    ],
+                    "none": []
+                  }
+                ],
+                "priority": 1,
+                "rule_label": [],
+                "statement": [
+                  {
+                    "and_statement": [],
+                    "asn_match_statement": [],
+                    "byte_match_statement": [],
+                    "geo_match_statement": [],
+                    "ip_set_reference_statement": [],
+                    "label_match_statement": [],
+                    "managed_rule_group_statement": [
+                      {
+                        "managed_rule_group_configs": [],
+                        "name": "AWSManagedRulesCommonRuleSet",
+                        "rule_action_override": [],
+                        "scope_down_statement": [],
+                        "vendor_name": "AWS",
+                        "version": ""
+                      }
+                    ],
+                    "not_statement": [],
+                    "or_statement": [],
+                    "rate_based_statement": [],
+                    "regex_match_statement": [],
+                    "regex_pattern_set_reference_statement": [],
+                    "rule_group_reference_statement": [],
+                    "size_constraint_statement": [],
+                    "sqli_match_statement": [],
+                    "xss_match_statement": []
+                  }
+                ],
+                "visibility_config": [
+                  {
+                    "cloudwatch_metrics_enabled": true,
+                    "metric_name": "CommonRuleSet",
+                    "sampled_requests_enabled": true
+                  }
+                ]
+              },
+              {
+                "action": [],
+                "captcha_config": [],
+                "challenge_config": [],
+                "name": "AWS-AWSManagedRulesKnownBadInputsRuleSet",
+                "override_action": [
+                  {
+                    "count": [
+                      {}
+                    ],
+                    "none": []
+                  }
+                ],
+                "priority": 2,
+                "rule_label": [],
+                "statement": [
+                  {
+                    "and_statement": [],
+                    "asn_match_statement": [],
+                    "byte_match_statement": [],
+                    "geo_match_statement": [],
+                    "ip_set_reference_statement": [],
+                    "label_match_statement": [],
+                    "managed_rule_group_statement": [
+                      {
+                        "managed_rule_group_configs": [],
+                        "name": "AWSManagedRulesKnownBadInputsRuleSet",
+                        "rule_action_override": [],
+                        "scope_down_statement": [],
+                        "vendor_name": "AWS",
+                        "version": ""
+                      }
+                    ],
+                    "not_statement": [],
+                    "or_statement": [],
+                    "rate_based_statement": [],
+                    "regex_match_statement": [],
+                    "regex_pattern_set_reference_statement": [],
+                    "rule_group_reference_statement": [],
+                    "size_constraint_statement": [],
+                    "sqli_match_statement": [],
+                    "xss_match_statement": []
+                  }
+                ],
+                "visibility_config": [
+                  {
+                    "cloudwatch_metrics_enabled": true,
+                    "metric_name": "KnownBadInputs",
+                    "sampled_requests_enabled": true
+                  }
+                ]
+              }
+            ],
+            "rule_json": null,
+            "scope": "CLOUDFRONT",
+            "tags": {
+              "Project": "url-shortener",
+              "Stage": "dev"
+            },
+            "tags_all": {
+              "Project": "url-shortener",
+              "Stage": "dev"
+            },
+            "token_domains": [],
+            "visibility_config": [
+              {
+                "cloudwatch_metrics_enabled": true,
+                "metric_name": "UrlShortenerCFWebACL",
+                "sampled_requests_enabled": true
+              }
+            ]
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA=="
+        }
+      ]
+    }
+  ],
+  "check_results": null
+}
+

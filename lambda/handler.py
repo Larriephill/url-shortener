@@ -3,16 +3,19 @@ import json, os, boto3, hashlib, base64, time
 
 _table = None
 
+# lambda/handler.py
 def _get_table():
     global _table
     if _table is None:
-        table_name = os.getenv("TABLE") or os.getenv("TABLE_NAME")
+        # Prefer TABLE_NAME for tests; fallback to TABLE for prod
+        table_name = os.getenv("TABLE_NAME") or os.getenv("TABLE")
         if not table_name:
             raise RuntimeError("TABLE env var is not set")
         region = os.getenv("AWS_REGION") or os.getenv("AWS_DEFAULT_REGION")
         ddb = boto3.resource("dynamodb", region_name=region) if region else boto3.resource("dynamodb")
         _table = ddb.Table(table_name)
     return _table
+
 
 def _parse_body(event):
     b = event.get("body")

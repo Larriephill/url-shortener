@@ -13,6 +13,7 @@ REGION = "eu-west-2"
 def test_post_then_get_redirects():
     os.environ["AWS_REGION"] = REGION
     os.environ["TABLE_NAME"] = TABLE
+    os.environ["TABLE"]      = TABLE
     os.environ["TTL_DAYS"]   = "1"
 
     ddb = boto3.client("dynamodb", region_name=REGION)
@@ -41,6 +42,7 @@ def test_post_then_get_redirects():
 def test_post_sets_ttl_and_get_redirects():
     os.environ["AWS_REGION"] = REGION
     os.environ["TABLE_NAME"] = TABLE
+    os.environ["TABLE"]      = TABLE 
     os.environ["TTL_DAYS"]   = "1"
 
     ddb = boto3.client("dynamodb", region_name=REGION)
