@@ -89,6 +89,15 @@ jobs:
         with:
           terraform_version: 1.9.5
 
+      - name: Debug — list Terraform files & providers
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: |
+          echo "== Files ==" && ls -la
+          echo "== Grep alias us_east_1 ==" && (grep -R --line-number 'alias.*us_east_1' || true)
+          echo "== terraform providers (config vs state) =="
+          terraform init -input=false -upgrade >/dev/null
+          terraform providers
+
       - name: Terraform fmt (check only)
         working-directory: ${{ env.TF_WORKING_DIR }}
         run: terraform fmt -recursive -check
