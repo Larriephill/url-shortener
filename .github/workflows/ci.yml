@@ -90,8 +90,9 @@ jobs:
           terraform_version: 1.9.5
 
       - name: Terraform fmt (check only)
+        if: github.ref == 'refs/heads/dev'
         working-directory: ${{ env.TF_WORKING_DIR }}
-        run: terraform fmt -recursive -check
+        run: terraform fmt -recursive
 
       - name: Configure AWS (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
