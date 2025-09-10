@@ -1,13 +1,16 @@
-# lambda/handler.py
-import json, os, boto3, hashlib, base64, time
+ # lambda/handler.py
+
+import json, os, boto3, hashlib, base64, time, logging
+
+log = logging.getLogger()
+if not log.handlers:
+    logging.basicConfig(level=os.getenv("LOG_LEVEL", "INFO"))
 
 _table = None
 
-# lambda/handler.py
 def _get_table():
     global _table
     if _table is None:
-        # Prefer TABLE_NAME for tests; fallback to TABLE for prod
         table_name = os.getenv("TABLE_NAME") or os.getenv("TABLE")
         if not table_name:
             raise RuntimeError("TABLE env var is not set")
@@ -16,10 +19,9 @@ def _get_table():
         _table = ddb.Table(table_name)
     return _table
 
-
 def _parse_body(event):
     b = event.get("body")
-    if isinstance(b, (dict, list)):     # <-- handles pytest dict bodies
+    if isinstance(b, (dict, list)):
         return b
     if b is None:
         return {}
@@ -34,6 +36,14 @@ def _normalize_url(u: str) -> str:
     return u
 
 def lambda_handler(event, context):
+    log.info(json.dumps({
+        "msg": "request",
+        "stage": os.getenv("STAGE", "dev"),
+        "method": event.get("httpMethod") or event.get("requestContext", {}).get("http", {}).get("method"),
+        "path": (event.get("requestContext", {}).get("http", {}) or {}).get("path"),
+        "requestId": (event.get("requestContext", {}) or {}).get("requestId")
+    }))
+
     method = event.get("httpMethod")
     if not method and "requestContext" in event and "http" in event["requestContext"]:
         method = event["requestContext"]["http"]["method"]
@@ -43,6 +53,7 @@ def lambda_handler(event, context):
             data = _parse_body(event)
             long_url = _normalize_url(data["url"])
         except Exception as e:
+            log.warning(json.dumps({"msg": "invalid_body", "error": str(e)}))
             return {
                 "statusCode": 400,
                 "headers": {"Content-Type": "application/json"},
@@ -56,19 +67,19 @@ def lambda_handler(event, context):
         if ttl_days:
             try:
                 exp = int(time.time()) + int(ttl_days) * 86400
-                item["expires_at"] = exp
-                item["expiresAt"]  = exp
-            except Exception:
-                pass
+                item["expiresAt"] = exp  # canonical TTL field
+            except Exception as e:
+                log.warning(json.dumps({"msg": "bad_ttl_env", "error": str(e)}))
 
         _get_table().put_item(Item=item)
-
+        log.info(json.dumps({"msg": "created", "shortcode": code}))
         return {
             "statusCode": 201,
             "headers": {"Content-Type": "application/json"},
             "body": json.dumps({"short": code}),
         }
 
+    # GET
     path_params = event.get("pathParameters") or {}
     code = path_params.get("code")
     if not code:
@@ -78,4 +89,6 @@ def lambda_handler(event, context):
     if not item:
         return {"statusCode": 404, "body": "Not found"}
 
+    log.info(json.dumps({"msg": "redirect", "shortcode": code}))
     return {"statusCode": 302, "headers": {"Location": item["url"]}, "body": ""}
+

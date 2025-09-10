@@ -1,9 +1,6 @@
 ############################################
 # CloudFront + WAF (CLOUDFRONT) in front of HTTP API v2
-# - Safe-by-default: disabled unless enable_cloudfront = true
-# - Requires:
-#     data.aws_route53_zone.root  (declared in domain.tf)
-#     aws_apigatewayv2_api.http   (from apigw.tf)
+# Safe-by-default: disabled unless enable_cloudfront = true
 ############################################
 
 variable "enable_cloudfront" {
@@ -25,11 +22,10 @@ variable "create_cf_alias_record" {
 }
 
 locals {
-  cf_fqdn       = "${var.cf_subdomain}.${var.domain_zone_name}" # e.g., api.regalhorizon.click
+  cf_fqdn       = "${var.cf_subdomain}.${var.domain_zone_name}"
   http_api_host = replace(aws_apigatewayv2_api.http.api_endpoint, "https://", "")
 }
 
-# Global managed policies (no caching + forward everything)
 data "aws_cloudfront_cache_policy" "disabled" {
   name = "Managed-CachingDisabled"
 }
@@ -38,7 +34,6 @@ data "aws_cloudfront_origin_request_policy" "all_viewer" {
   name = "Managed-AllViewer"
 }
 
-# --- ACM cert for CloudFront (must be in us-east-1) ---
 resource "aws_acm_certificate" "cf" {
   count             = var.enable_cloudfront ? 1 : 0
   provider          = aws.us_east_1
@@ -53,8 +48,7 @@ resource "aws_acm_certificate" "cf" {
 
 resource "aws_route53_record" "cf_validation" {
   for_each = var.enable_cloudfront ? {
-    for dvo in aws_acm_certificate.cf[0].domain_validation_options :
-    dvo.domain_name => {
+    for dvo in aws_acm_certificate.cf[0].domain_validation_options : dvo.domain_name => {
       name  = dvo.resource_record_name
       type  = dvo.resource_record_type
       value = dvo.resource_record_value
@@ -76,7 +70,6 @@ resource "aws_acm_certificate_validation" "cf" {
   validation_record_fqdns = values(aws_route53_record.cf_validation)[*].fqdn
 }
 
-# --- WAFv2 for CloudFront (scope CLOUDFRONT, us-east-1) ---
 resource "aws_wafv2_web_acl" "cf" {
   count       = var.enable_cloudfront ? 1 : 0
   provider    = aws.us_east_1
@@ -94,7 +87,7 @@ resource "aws_wafv2_web_acl" "cf" {
 
     override_action {
       count {}
-    } # flip to 'block {}' after observing
+    }
 
     statement {
       managed_rule_group_statement {
@@ -154,7 +147,6 @@ resource "aws_wafv2_web_acl" "cf" {
     }
   }
 
-  # Basic rate limit (tune as needed)
   rule {
     name     = "RateLimitPerIP"
     priority = 10
@@ -189,7 +181,6 @@ resource "aws_wafv2_web_acl" "cf" {
   }
 }
 
-# --- CloudFront distribution (only when enabled) ---
 resource "aws_cloudfront_distribution" "api" {
   count       = var.enable_cloudfront ? 1 : 0
   enabled     = true
@@ -239,7 +230,6 @@ resource "aws_cloudfront_distribution" "api" {
   depends_on = [aws_acm_certificate_validation.cf]
 }
 
-# Route53 A/AAAA alias to CloudFront (only when enabled + requested)
 resource "aws_route53_record" "cf_alias" {
   count   = var.enable_cloudfront && var.create_cf_alias_record ? 1 : 0
   zone_id = data.aws_route53_zone.root.zone_id
