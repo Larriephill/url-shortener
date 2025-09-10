@@ -241,7 +241,7 @@ resource "aws_cloudfront_distribution" "api" {
 
 # Route53 A/AAAA alias to CloudFront (only when enabled + requested)
 resource "aws_route53_record" "cf_alias" {
-  count  = var.enable_cloudfront && var.create_cf_alias_record ? 1 : 0
+  count   = var.enable_cloudfront && var.create_cf_alias_record ? 1 : 0
   zone_id = data.aws_route53_zone.root.zone_id
   name    = local.cf_fqdn
   type    = "A"
@@ -256,7 +256,7 @@ resource "aws_route53_record" "cf_alias" {
 }
 
 resource "aws_route53_record" "cf_alias_aaaa" {
-  count  = var.enable_cloudfront && var.create_cf_alias_record ? 1 : 0
+  count   = var.enable_cloudfront && var.create_cf_alias_record ? 1 : 0
   zone_id = data.aws_route53_zone.root.zone_id
   name    = local.cf_fqdn
   type    = "AAAA"
