@@ -25,12 +25,27 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::416162027738:role/url-prod-gha-apply
           aws-region: ${{ env.AWS_REGION }}
+
+      # Ensure backend config exists BEFORE any terraform init
+      - name: Create backend-prod.hcl
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: |
+          cat > backend-prod.hcl <<'HCL'
+          bucket         = "urlshortenerlarriephill"
+          key            = "state/prod/terraform.tfstate"
+          region         = "eu-west-2"
+          dynamodb_table = "tf-lock-prod"
+          encrypt        = true
+          HCL
+
       - name: Terraform init (prod backend)
         working-directory: ${{ env.TF_WORKING_DIR }}
         run: terraform init -input=false -upgrade -backend-config=backend-prod.hcl
+
       - name: Terraform validate
         working-directory: ${{ env.TF_WORKING_DIR }}
         run: terraform validate
+
       - name: Terraform plan (prod)
         working-directory: ${{ env.TF_WORKING_DIR }}
         run: terraform plan -input=false -no-color -var="stage=${{ env.TF_VAR_stage }}"
@@ -52,16 +67,32 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::416162027738:role/url-prod-gha-apply
           aws-region: ${{ env.AWS_REGION }}
+
+      # Ensure backend config exists BEFORE any terraform init
+      - name: Create backend-prod.hcl
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: |
+          cat > backend-prod.hcl <<'HCL'
+          bucket         = "urlshortenerlarriephill"
+          key            = "state/prod/terraform.tfstate"
+          region         = "eu-west-2"
+          dynamodb_table = "tf-lock-prod"
+          encrypt        = true
+          HCL
+
       - name: Terraform init (prod backend)
         working-directory: ${{ env.TF_WORKING_DIR }}
         run: terraform init -input=false -upgrade -backend-config=backend-prod.hcl
+
       - name: Terraform apply (prod)
         working-directory: ${{ env.TF_WORKING_DIR }}
         run: terraform apply -input=false -auto-approve -var="stage=${{ env.TF_VAR_stage }}"
+
       - name: Read API URL from state
         id: tfout
         working-directory: ${{ env.TF_WORKING_DIR }}
         run: echo "api=$(terraform output -raw api_base_url)" >> "$GITHUB_OUTPUT"
+
       - name: Smoke test (POST/GET)
         env:
           API_URL: ${{ steps.tfout.outputs.api }}
