@@ -100,13 +100,23 @@ jobs:
           role-to-assume: arn:aws:iam::416162027738:role/url-dev-gha-plan
           aws-region: ${{ env.AWS_REGION }}
 
+      - name: Create backend-dev.hcl
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: |
+          cat > backend-dev.hcl <<'HCL'
+          bucket         = "urlshortenerlarriephill"
+          key            = "state/dev/terraform.tfstate"
+          region         = "eu-west-2"
+          dynamodb_table = "tf-lock-dev"
+          encrypt        = true
+          HCL
       - name: Debug — list Terraform files & providers
         working-directory: ${{ env.TF_WORKING_DIR }}
         run: |
           echo "== Files ==" && ls -la
           echo "== Grep alias us_east_1 ==" && (grep -R --line-number 'alias.*us_east_1' || true)
           echo "== terraform providers (config vs state) =="
-          terraform init -input=false -upgrade >/dev/null
+          terraform init -input=false -upgrade -backend-config=backend-dev.hcl >/dev/null
           terraform providers
 
       - name: Terraform init (remote backend - dev)
