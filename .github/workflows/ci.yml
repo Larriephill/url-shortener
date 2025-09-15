@@ -109,9 +109,9 @@ jobs:
           terraform init -input=false -upgrade >/dev/null
           terraform providers
 
-      - name: Terraform init (remote backend)
+      - name: Terraform init (remote backend - dev)
         working-directory: ${{ env.TF_WORKING_DIR }}
-        run: terraform init -input=false -upgrade
+        run: terraform init -input=false -upgrade -backend-config=backend-dev.hcl
 
       - name: Terraform validate
         working-directory: ${{ env.TF_WORKING_DIR }}
