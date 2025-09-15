@@ -1,92 +1,68 @@
-name: deploy-dev
+name: deploy-prod
 
 on:
   workflow_dispatch:
 
-concurrency:
-  group: deploy-dev
-  cancel-in-progress: false  
-
-permissions:
-  id-token: write
-  contents: read
-
 env:
   TF_WORKING_DIR: terraform
   AWS_REGION: eu-west-2
-  TF_VAR_stage: dev
+  TF_VAR_stage: prod
   TF_IN_AUTOMATION: "1"
 
 jobs:
-  apply:
+  plan:
     runs-on: ubuntu-latest
-    environment: dev   # <-- drives OIDC subject to environment:dev
-
+    permissions:
+      id-token: write
+      contents: read
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.9.5
-
-      - name: Configure AWS (OIDC, APPLY)
+      - name: Configure AWS (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::416162027738:role/url-dev-gha-apply
+          role-to-assume: arn:aws:iam::416162027738:role/url-prod-gha-apply
           aws-region: ${{ env.AWS_REGION }}
-
-      # Quick sanity: who am I?
-      - name: STS caller identity
-        run: aws sts get-caller-identity
-
-      - name: Terraform init (remote backend)
+      - name: Terraform init (prod backend)
         working-directory: ${{ env.TF_WORKING_DIR }}
-        run: terraform init -input=false -upgrade
-
-      # Prove backend WRITE (Put/DeleteObject) safely
-      - name: Backend write test
-        env:
-          TEST_KEY: state/_ci_test/${{ github.run_id }}.txt
-        run: |
-          set -euo pipefail
-          echo ok > /tmp/oidc_write_test.txt
-          aws s3 cp /tmp/oidc_write_test.txt s3://urlshortenerlarriephill/$TEST_KEY
-          aws s3 rm s3://urlshortenerlarriephill/$TEST_KEY
-
-
-      # Non-destructive apply just to refresh state (will be no-op if no drift)
-      - name: Terraform apply (refresh-only)
+        run: terraform init -input=false -upgrade -backend-config=backend-prod.hcl
+      - name: Terraform validate
         working-directory: ${{ env.TF_WORKING_DIR }}
-        run: terraform apply -refresh-only -auto-approve -input=false
-
-      # Terraform plan before full apply
-      - name: Terraform plan
+        run: terraform validate
+      - name: Terraform plan (prod)
         working-directory: ${{ env.TF_WORKING_DIR }}
         run: terraform plan -input=false -no-color -var="stage=${{ env.TF_VAR_stage }}"
 
-      - name: Terraform apply
+  apply:
+    needs: plan
+    runs-on: ubuntu-latest
+    environment: prod   # require approval in GitHub Environments
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.9.5
+      - name: Configure AWS (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::416162027738:role/url-prod-gha-apply
+          aws-region: ${{ env.AWS_REGION }}
+      - name: Terraform init (prod backend)
         working-directory: ${{ env.TF_WORKING_DIR }}
-        run: terraform apply -auto-approve -input=false -var="stage=${{ env.TF_VAR_stage }}"
-
-      - name: Read API URL
+        run: terraform init -input=false -upgrade -backend-config=backend-prod.hcl
+      - name: Terraform apply (prod)
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: terraform apply -input=false -auto-approve -var="stage=${{ env.TF_VAR_stage }}"
+      - name: Read API URL from state
         id: tfout
         working-directory: ${{ env.TF_WORKING_DIR }}
         run: echo "api=$(terraform output -raw api_base_url)" >> "$GITHUB_OUTPUT"
-
-      - name: Post-deploy smoke
+      - name: Smoke test (POST/GET)
         env:
           API_URL: ${{ steps.tfout.outputs.api }}
-        run: |
-          set -euo pipefail
-          echo "API_URL=$API_URL"
-          # POST -> expect {"shortcode": "..."}
-          RESP=$(curl -sS -X POST "$API_URL/" -H 'Content-Type: application/json' -d '{"url":"example.com"}')
-          echo "POST response: $RESP"
-          CODE=$(echo "$RESP" | jq -r '.shortcode')
-          test -n "$CODE"
-          # GET -> expect 302
-          STATUS=$(curl -sS -o /dev/null -D - "$API_URL/$CODE" | head -1 | awk '{print $2}')
-          echo "GET status: $STATUS"
-          test "$STATUS" = "302"
+        run: bash verify.sh "$API_URL"
