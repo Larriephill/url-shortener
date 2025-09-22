@@ -18,3 +18,15 @@ variable "api_subdomain" {
   type    = string
   default = "api"
 } # => api.regalhorizon.click
+
+variable "enable_lambda_alias" {
+  description = "Create and use a Lambda alias 'live' for routing"
+  type        = bool
+  default     = true
+}
+
+variable "lambda_canary_weight" {
+  description = "Optional % weight to another version (0..100). Leave 0 for no canary."
+  type        = number
+  default     = 0
+}

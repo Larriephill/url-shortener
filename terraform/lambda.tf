@@ -57,6 +57,8 @@ resource "aws_lambda_function" "url" {
   depends_on = [
     aws_cloudwatch_log_group.lambda
   ]
+
+  publish = true
 }
 
 # Useful outputs
@@ -68,4 +70,12 @@ output "lambda_name" {
 output "lambda_arn" {
   value       = aws_lambda_function.url.arn
   description = "Deployed Lambda function ARN"
+}
+
+resource "aws_lambda_alias" "live" {
+  count            = var.enable_lambda_alias ? 1 : 0
+  name             = "live"
+  description      = "Stable alias for ${var.stage}"
+  function_name    = aws_lambda_function.url.function_name
+  function_version = aws_lambda_function.url.version
 }

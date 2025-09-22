@@ -35,4 +35,15 @@ output "waf_web_acl_arn" {
   description = "ARN of the CloudFront-scoped WAFv2 Web ACL (null if CloudFront disabled)"
 }
 
+output "lambda_version" {
+  value       = aws_lambda_function.url.version
+  description = "Latest published version of the Lambda function"
+}
+
+output "lambda_alias_arn" {
+  value       = var.enable_lambda_alias && length(aws_lambda_alias.live) > 0 ? aws_lambda_alias.live[0].arn : null
+  description = "ARN of the 'live' alias (if enabled)"
+}
+
+
 
