@@ -1,21 +1,23 @@
+# iam_ci_apply.tf
+# Dev-only CI roles & policies (plan+apply). Prod has its own file.
 
+# ---------- Trust policy (dev) ----------
 data "aws_iam_policy_document" "gha_oidc_trust_apply" {
   statement {
     actions = ["sts:AssumeRoleWithWebIdentity"]
 
     principals {
       type        = "Federated"
-      identifiers = [aws_iam_openid_connect_provider.github.arn]
+      identifiers = [local.oidc_provider_arn] # use common ARN string
     }
 
-    # Audience must be STS
     condition {
       test     = "StringEquals"
       variable = "token.actions.githubusercontent.com:aud"
       values   = ["sts.amazonaws.com"]
     }
 
-    # Only jobs running in environment "dev" (allow both repo casings)
+    # restrict to environment:dev
     condition {
       test     = "StringEquals"
       variable = "token.actions.githubusercontent.com:sub"
@@ -28,20 +30,15 @@ data "aws_iam_policy_document" "gha_oidc_trust_apply" {
 }
 
 resource "aws_iam_role" "gha_apply" {
+  count              = local.is_dev ? 1 : 0
   name               = "url-dev-gha-apply"
   assume_role_policy = data.aws_iam_policy_document.gha_oidc_trust_apply.json
 
-  # Prevents Terraform from ever trying to change the role description
-  lifecycle {
-    ignore_changes = [description]
-  }
+  lifecycle { ignore_changes = [description] }
 }
 
-
-# ---- BACKEND (S3 + DDB lock) — WRITE + reads terraform needs ----
-
+# ---------- Backend (S3+DDB lock dev) ----------
 data "aws_iam_policy_document" "gha_apply_backend" {
-  # List & metadata on the state bucket
   statement {
     sid    = "S3BucketMetaReads"
     effect = "Allow"
@@ -52,7 +49,6 @@ data "aws_iam_policy_document" "gha_apply_backend" {
     resources = ["arn:aws:s3:::urlshortenerlarriephill"]
   }
 
-  # Read/Write state objects
   statement {
     sid       = "S3StateRw"
     effect    = "Allow"
@@ -60,7 +56,6 @@ data "aws_iam_policy_document" "gha_apply_backend" {
     resources = ["arn:aws:s3:::urlshortenerlarriephill/*"]
   }
 
-  # DDB state lock + backups describe
   statement {
     sid    = "DDBStateLock"
     effect = "Allow"
@@ -72,25 +67,24 @@ data "aws_iam_policy_document" "gha_apply_backend" {
       "dynamodb:DescribeContinuousBackups",
       "dynamodb:ListTagsOfResource"
     ]
-    resources = ["arn:aws:dynamodb:eu-west-2:416162027738:table/tf-lock-dev"]
+    resources = ["arn:aws:dynamodb:${data.aws_region.current.name}:${data.aws_caller_identity.me.account_id}:table/tf-lock-dev"]
   }
 }
 
-
-
-
 resource "aws_iam_policy" "gha_apply_backend" {
+  count       = local.is_dev ? 1 : 0
   name        = "url-dev-gha-apply-backend"
-  description = "Backend (S3+DDB lock) RW for Terraform apply; includes required reads"
+  description = "Backend (S3+DDB lock) RW for Terraform apply (dev)"
   policy      = data.aws_iam_policy_document.gha_apply_backend.json
 }
 
 resource "aws_iam_role_policy_attachment" "gha_apply_attach_backend" {
-  role       = aws_iam_role.gha_apply.name
-  policy_arn = aws_iam_policy.gha_apply_backend.arn
+  count      = local.is_dev ? 1 : 0
+  role       = aws_iam_role.gha_apply[0].name
+  policy_arn = aws_iam_policy.gha_apply_backend[0].arn
 }
 
-# ---- IAM READ for refresh (no writes) ----
+# ---------- IAM read-only for refresh ----------
 data "aws_iam_policy_document" "gha_apply_iam_read" {
   statement {
     sid       = "IamReadOnly"
@@ -101,17 +95,19 @@ data "aws_iam_policy_document" "gha_apply_iam_read" {
 }
 
 resource "aws_iam_policy" "gha_apply_iam_read" {
+  count       = local.is_dev ? 1 : 0
   name        = "url-dev-gha-apply-iam-readonly"
-  description = "Allow IAM read-only for Terraform refresh"
+  description = "IAM read-only for Terraform refresh (dev)"
   policy      = data.aws_iam_policy_document.gha_apply_iam_read.json
 }
 
 resource "aws_iam_role_policy_attachment" "gha_apply_attach_iam_read" {
-  role       = aws_iam_role.gha_apply.name
-  policy_arn = aws_iam_policy.gha_apply_iam_read.arn
+  count      = local.is_dev ? 1 : 0
+  role       = aws_iam_role.gha_apply[0].name
+  policy_arn = aws_iam_policy.gha_apply_iam_read[0].arn
 }
 
-# ---- APP DEPLOY perms (region-scoped where possible) ----
+# ---------- App deploy perms (eu-west-2) ----------
 data "aws_iam_policy_document" "gha_apply_app" {
   # Lambda
   statement {
@@ -128,11 +124,11 @@ data "aws_iam_policy_document" "gha_apply_app" {
     condition {
       test     = "StringEquals"
       variable = "aws:RequestedRegion"
-      values   = ["eu-west-2"]
+      values   = [data.aws_region.current.name]
     }
   }
 
-  # API Gateway v2 control-plane
+  # API Gateway v2
   statement {
     sid       = "ApiGatewayV2Manage"
     effect    = "Allow"
@@ -141,11 +137,11 @@ data "aws_iam_policy_document" "gha_apply_app" {
     condition {
       test     = "StringEquals"
       variable = "aws:RequestedRegion"
-      values   = ["eu-west-2"]
+      values   = [data.aws_region.current.name]
     }
   }
 
-  # DynamoDB (tables, TTL, backups describe)
+  # DynamoDB
   statement {
     sid    = "DynamoDbManageTables"
     effect = "Allow"
@@ -155,10 +151,10 @@ data "aws_iam_policy_document" "gha_apply_app" {
       "dynamodb:UpdateTimeToLive", "dynamodb:DescribeTimeToLive", "dynamodb:ListTables",
       "dynamodb:DescribeContinuousBackups"
     ]
-    resources = ["arn:aws:dynamodb:eu-west-2:416162027738:table/*"]
+    resources = ["arn:aws:dynamodb:${data.aws_region.current.name}:${data.aws_caller_identity.me.account_id}:table/*"]
   }
 
-  # CloudWatch Logs + CloudWatch (incl. Logs tag reads)
+  # CloudWatch + Logs (region-scoped)
   statement {
     sid    = "LogsAndCloudWatch"
     effect = "Allow"
@@ -174,11 +170,11 @@ data "aws_iam_policy_document" "gha_apply_app" {
     condition {
       test     = "StringEquals"
       variable = "aws:RequestedRegion"
-      values   = ["eu-west-2"]
+      values   = [data.aws_region.current.name]
     }
   }
 
-  # IAM needed for lambda exec roles & customer policies used by this stack
+  # IAM for Lambda exec roles & our url-* policies
   statement {
     sid    = "IamForLambdaExec"
     effect = "Allow"
@@ -191,26 +187,28 @@ data "aws_iam_policy_document" "gha_apply_app" {
       "iam:PassRole"
     ]
     resources = [
-      "arn:aws:iam::416162027738:role/url-*",
-      "arn:aws:iam::416162027738:role/*lambda*",
-      "arn:aws:iam::416162027738:policy/url-*",
-      "arn:aws:iam::416162027738:policy/*lambda*"
+      "arn:aws:iam::${data.aws_caller_identity.me.account_id}:role/url-*",
+      "arn:aws:iam::${data.aws_caller_identity.me.account_id}:role/*lambda*",
+      "arn:aws:iam::${data.aws_caller_identity.me.account_id}:policy/url-*",
+      "arn:aws:iam::${data.aws_caller_identity.me.account_id}:policy/*lambda*"
     ]
   }
 }
 
 resource "aws_iam_policy" "gha_apply_app" {
+  count       = local.is_dev ? 1 : 0
   name        = "url-dev-gha-apply-app"
-  description = "Deploy perms for Lambda, API GW v2, DynamoDB, Logs, CW (eu-west-2)"
+  description = "Deploy perms for Lambda, API GW v2, DynamoDB, Logs, CW (dev)"
   policy      = data.aws_iam_policy_document.gha_apply_app.json
 }
 
 resource "aws_iam_role_policy_attachment" "gha_apply_attach_app" {
-  role       = aws_iam_role.gha_apply.name
-  policy_arn = aws_iam_policy.gha_apply_app.arn
+  count      = local.is_dev ? 1 : 0
+  role       = aws_iam_role.gha_apply[0].name
+  policy_arn = aws_iam_policy.gha_apply_app[0].arn
 }
 
-# ---- Manage our url-* customer-managed policies precisely ----
+# Manage url-* policies precisely
 data "aws_iam_policy_document" "gha_apply_manage_url_policies" {
   statement {
     sid    = "ManageUrlPolicies"
@@ -225,41 +223,44 @@ data "aws_iam_policy_document" "gha_apply_manage_url_policies" {
       "iam:DeletePolicy"
     ]
     resources = [
-      "arn:aws:iam::416162027738:policy/url-*",
-      "arn:aws:iam::416162027738:policy/url_*"
+      "arn:aws:iam::${data.aws_caller_identity.me.account_id}:policy/url-*",
+      "arn:aws:iam::${data.aws_caller_identity.me.account_id}:policy/url_*"
     ]
   }
 }
 
 resource "aws_iam_policy" "gha_apply_manage_url_policies" {
+  count       = local.is_dev ? 1 : 0
   name        = "url-dev-gha-apply-manage-url-policies"
-  description = "Allow apply role to manage url-* customer-managed policies"
+  description = "Allow apply role to manage url-* customer-managed policies (dev)"
   policy      = data.aws_iam_policy_document.gha_apply_manage_url_policies.json
 }
 
 resource "aws_iam_role_policy_attachment" "gha_apply_attach_manage_url_policies" {
-  role       = aws_iam_role.gha_apply.name
-  policy_arn = aws_iam_policy.gha_apply_manage_url_policies.arn
+  count      = local.is_dev ? 1 : 0
+  role       = aws_iam_role.gha_apply[0].name
+  policy_arn = aws_iam_policy.gha_apply_manage_url_policies[0].arn
 }
 
-# Allow this role to update its own description (needed due to provider behavior)
+# Allow updating own description (provider behavior)
 data "aws_iam_policy_document" "gha_apply_self_desc" {
   statement {
     sid       = "UpdateOwnDescription"
     effect    = "Allow"
     actions   = ["iam:UpdateRoleDescription"]
-    resources = ["arn:aws:iam::416162027738:role/url-dev-gha-apply"]
+    resources = ["arn:aws:iam::${data.aws_caller_identity.me.account_id}:role/url-dev-gha-apply"]
   }
 }
 
 resource "aws_iam_policy" "gha_apply_self_desc" {
+  count       = local.is_dev ? 1 : 0
   name        = "url-dev-gha-apply-self-desc"
-  description = "Allow apply role to update its own description only"
+  description = "Allow apply role to update its own description only (dev)"
   policy      = data.aws_iam_policy_document.gha_apply_self_desc.json
 }
 
 resource "aws_iam_role_policy_attachment" "gha_apply_attach_self_desc" {
-  role       = aws_iam_role.gha_apply.name
-  policy_arn = aws_iam_policy.gha_apply_self_desc.arn
+  count      = local.is_dev ? 1 : 0
+  role       = aws_iam_role.gha_apply[0].name
+  policy_arn = aws_iam_policy.gha_apply_self_desc[0].arn
 }
-

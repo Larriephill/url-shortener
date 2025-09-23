@@ -1,9 +1,4 @@
 
-variable "stage" {
-  description = "Deployment stage (dev/prod)"
-  type        = string
-  default     = "dev"
-}
 
 variable "ttl_days" {
   description = "Days till a short link expires (0 disables TTL writes)"
