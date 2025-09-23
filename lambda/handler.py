@@ -1,6 +1,24 @@
  # lambda/handler.py
 
-import json, os, boto3, hashlib, base64, time, logging
+import os
+
+_ORIGIN_SECRET = os.environ.get("ORIGIN_SECRET", "")
+
+def _enforce_origin_secret(event):
+    if not _ORIGIN_SECRET:
+        return None  # feature disabled
+    headers = (event or {}).get("headers", {}) or {}
+    # headers are case-insensitive in API GW; normalize
+    val = None
+    for k, v in headers.items():
+        if k.lower() == "x-origin-secret":
+            val = v
+            break
+    if val != _ORIGIN_SECRET:
+        return {"statusCode": 403, "body": "Forbidden"}
+    return None
+
+import json, boto3, hashlib, base64, time, logging
 
 log = logging.getLogger()
 if not log.handlers:
@@ -36,6 +54,10 @@ def _normalize_url(u: str) -> str:
     return u
 
 def lambda_handler(event, context):
+    guard = _enforce_origin_secret(event)
+    if guard:
+        return guard
+    
     log.info(json.dumps({
         "msg": "request",
         "stage": os.getenv("STAGE", "dev"),

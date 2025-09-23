@@ -39,6 +39,7 @@ resource "aws_lambda_function" "url" {
     variables = {
       TABLE           = aws_dynamodb_table.urls.name
       TTL_DAYS        = var.ttl_days
+      ORIGIN_SECRET   = var.origin_shared_secret
       STAGE           = var.stage
       METRICS_ENABLED = "true"
     }
@@ -78,4 +79,13 @@ resource "aws_lambda_alias" "live" {
   description      = "Stable alias for ${var.stage}"
   function_name    = aws_lambda_function.url.function_name
   function_version = aws_lambda_function.url.version
+
+  dynamic "routing_config" {
+    for_each = var.lambda_canary_weight > 0 ? [1] : []
+    content {
+      additional_version_weights = {
+        "${aws_lambda_function.url.version}" = var.lambda_canary_weight / 100.0
+      }
+    }
+  }
 }

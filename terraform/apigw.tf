@@ -29,10 +29,18 @@ resource "aws_apigatewayv2_api" "http" {
 resource "aws_apigatewayv2_integration" "lambda" {
   api_id                 = aws_apigatewayv2_api.http.id
   integration_type       = "AWS_PROXY"
-  integration_uri        = local.lambda_invoke_uri
   integration_method     = "POST"
   payload_format_version = "2.0"
+
+  integration_uri = (
+    var.enable_lambda_alias && length(aws_lambda_alias.live) > 0
+    ? aws_lambda_alias.live[0].invoke_arn
+    : aws_lambda_function.url.invoke_arn
+  )
 }
+
+
+
 
 # -------------------------------
 # API Routes
