@@ -1,4 +1,4 @@
-name: deploy-prod
+ame: deploy-prod
 
 on:
   workflow_dispatch:
@@ -47,9 +47,15 @@ jobs:
         working-directory: ${{ env.TF_WORKING_DIR }}
         run: terraform validate
 
-      - name: Terraform plan (prod)
+      # INSERTED: IAM BOOTSTRAP
+      - name: Terraform plan (prod - IAM bootstrap)
         working-directory: ${{ env.TF_WORKING_DIR }}
-        run: terraform plan -input=false -no-color -var="stage=${{ env.TF_VAR_stage }}"
+        run: |
+          terraform plan -input=false -no-color -var="stage=${{ env.TF_VAR_stage }}" \
+            -target=aws_iam_policy.gha_apply_app_prod \
+            -target=aws_iam_role_policy_attachment.gha_apply_attach_app_prod \
+            -target=aws_iam_policy.gha_apply_dns_acm_prod \
+            -target=aws_iam_role_policy_attachment.gha_apply_attach_dns_acm_prod
 
   apply:
     needs: plan
@@ -85,9 +91,15 @@ jobs:
         working-directory: ${{ env.TF_WORKING_DIR }}
         run: terraform init -input=false -upgrade -backend-config=backend-prod.hcl
 
-      - name: Terraform apply (prod)
+      # INSERTED: IAM BOOTSTRAP
+      - name: Terraform apply (prod - IAM bootstrap)
         working-directory: ${{ env.TF_WORKING_DIR }}
-        run: terraform apply -input=false -auto-approve -var="stage=${{ env.TF_VAR_stage }}"
+        run: |
+          terraform apply -input=false -auto-approve -var="stage=${{ env.TF_VAR_stage }}" \
+            -target=aws_iam_policy.gha_apply_app_prod \
+            -target=aws_iam_role_policy_attachment.gha_apply_attach_app_prod \
+            -target=aws_iam_policy.gha_apply_dns_acm_prod \
+            -target=aws_iam_role_policy_attachment.gha_apply_attach_dns_acm_prod
 
       - name: Read API URL from state
         id: tfout
@@ -98,3 +110,4 @@ jobs:
         env:
           API_URL: ${{ steps.tfout.outputs.api }}
         run: bash verify.sh "$API_URL"
+
