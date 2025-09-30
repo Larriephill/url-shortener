@@ -18,7 +18,7 @@ data "aws_iam_policy_document" "gha_oidc_trust" {
     actions = ["sts:AssumeRoleWithWebIdentity"]
 
     principals {
-      type        = "Federated"
+      type = "Federated"
       # Use the shared OIDC provider ARN from env.tf
       identifiers = [local.oidc_provider_arn]
     }
