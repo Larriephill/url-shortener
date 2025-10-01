@@ -109,19 +109,32 @@ resource "aws_iam_role_policy_attachment" "gha_apply_attach_iam_read_prod" {
 data "aws_iam_policy_document" "gha_apply_app_prod" {
   # Lambda
   statement {
-    sid    = "LambdaManage"
+    sid    = "LambdaReadAll"
     effect = "Allow"
     actions = [
-      "logs:CreateLogGroup", "logs:CreateLogStream", "logs:PutRetentionPolicy",
-      "logs:DeleteLogGroup", "logs:DescribeLogGroups", "logs:DescribeLogStreams",
-      "logs:ListTagsForResource",
-      "cloudwatch:PutMetricAlarm", "cloudwatch:DeleteAlarms", "cloudwatch:DescribeAlarms",
-      "cloudwatch:TagResource", "cloudwatch:UntagResource",
-      "cloudwatch:ListTagsForResource",
-      # dashboard reads/writes
-      "cloudwatch:GetDashboard",
-      "cloudwatch:PutDashboard",
-      "cloudwatch:DeleteDashboards"
+      "lambda:Get*",
+      "lambda:List*"
+    ]
+    resources = ["*"]
+  }
+
+  # Lambda WRITE (keep region guard)
+  statement {
+    sid    = "LambdaWriteRegionScoped"
+    effect = "Allow"
+    actions = [
+      "lambda:CreateFunction",
+      "lambda:UpdateFunctionCode",
+      "lambda:UpdateFunctionConfiguration",
+      "lambda:DeleteFunction",
+      "lambda:PublishVersion",
+      "lambda:CreateAlias",
+      "lambda:UpdateAlias",
+      "lambda:DeleteAlias",
+      "lambda:AddPermission",
+      "lambda:RemovePermission",
+      "lambda:TagResource",
+      "lambda:UntagResource"
     ]
     resources = ["*"]
     condition {
